@@ -1,0 +1,18 @@
+SETUP:
+pip3 install -r requirements.txt        # eel's 'prod' requirements
+pip3 install -r requirements-test.txt   # pytest and selenium
+pip3 install -r requirements-meta.txt   # tox
+
+
+
+DEVELOPMENT:
+
+in first terminal run:
+cd app
+npm start
+[Strona odpalona w przegląarce nie będzie działać]
+
+in second terminal run:
+cd app
+python eel_CRA.py true
+[powinno pojawić się okno z aplikacją]
