@@ -7,6 +7,14 @@ import sys
 
 import eel
 
+from backend.event_log import make_event_log
+
+@eel.expose
+def use_button(x):
+    print(x)
+    make_event_log(9, 10, 1)
+    return "use_button success"
+
 # Use latest version of Eel from parent directory
 sys.path.insert(1, './')
 
@@ -75,6 +83,6 @@ def start_eel(develop):
 
 if __name__ == '__main__':
     import sys
-
+    
     # Pass any second argument to enable debugging
     start_eel(develop=len(sys.argv) == 2)

@@ -1,6 +1,9 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
+import Dropzone from './Dropzone'
+import Button from './Components/Button'
+
+
 
 // Point Eel web socket to the instance
 export const eel = window.eel
@@ -27,29 +30,48 @@ eel.say_hello_py( 'Javascript World!' )
 const defPath = '~'
 
 
-export class App extends Component {
-  state = {
-    message: `Click button to choose a random file from the user's system`,
-    path: defPath,
-  }
+// class App extends Component {
+//   state = {
+//     message: `Click button to choose a random file from the user's system`,
+//     path: defPath,
+//   }
 
-  pickFile = () => {
-    eel.pick_file(defPath)(( message) => this.setState( { message } ) )
-  }
+//   pickFile = () => {
+//     eel.pick_file(defPath)(( message) => this.setState( { message } ) )
+//   }
 
-  render() {
-    eel.expand_user(defPath)(( path) => this.setState( { path } ) )
-    return (
-      <div className="App">
-        <header className="App-header">
-          <h1>Witam moją szanowną grupę</h1>
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>{this.state.message}</p>
-          <button className='App-button' onClick={this.pickFile}>Pick Random File From `{this.state.path}`</button>
-        </header>
+//   render() {
+//     eel.expand_user(defPath)(( path) => this.setState( { path } ) )
+//     return (
+
+//         <div className="App">
+//           <h1 className='text-blue-600'> Eel React Example </h1>
+//           <Button color="red">Pick a file</Button>
+//         </div>
+//     );
+//   }
+// }
+
+const App = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log('submit')
+    console.log(e)
+  }
+  const handleTest = ()=>{
+    eel.use_button('test')((message) => console.log(message))
+  }
+  return (
+    <div className="container mx-auto flex flex-col items-center justify-center w-full  h-screen">
+      <Button onClick={handleTest}>Test Funkcji na Backendzie</Button>
+
+      <div className="w-full flex flex-col items-center">
+        <h1 className='text-center text-3xl my-4'> Wczytaj plik csv </h1>
+        <Dropzone />
+        <Button onClick={handleSubmit} >Zatwierdź</Button>
       </div>
-    );
-  }
+    </div>
+  )
 }
 
 export default App;
