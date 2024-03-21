@@ -1,7 +1,13 @@
 SETUP:
-pip3 install -r requirements.txt        # eel's 'prod' requirements
-pip3 install -r requirements-test.txt   # pytest and selenium
-pip3 install -r requirements-meta.txt   # tox
+pip install -r requirements.txt        # eel's 'prod' requirements
+pip install eel
+cd app 
+npm install
+
+
+[tego poniżej raczej nie trzeba]
+pip install -r requirements-test.txt   # pytest and selenium
+pip install -r requirements-meta.txt   # tox
 
 
 
