@@ -1,4 +1,5 @@
 import pandas as pd
+import pm4py
 import eel
 
 csv_data = """ID\tTimestamp\tZmienna A\tZmienna B\tZmienna C\tZmienna D\tZmienna E\tZmienna F\tZmienna G\tCase ID\tCluster
@@ -33,11 +34,31 @@ csv_data = """ID\tTimestamp\tZmienna A\tZmienna B\tZmienna C\tZmienna D\tZmienna
 29\t01.01.2020 04:40\t169\t74,8\t60\t1\t100,2799988\t114,4000015\t0\t2\t4
 30\t01.01.2020 04:50\t162,5\t70,4\t35\t1\t79,40000153\t97\t0\t2\t4"""
 
-# global df
-#df = pd.read_csv(pd.compat.StringIO(csv_data), delimiter='\t')
+# Splitting the data by lines and then by tabs
+data_rows = [row.split('\t') for row in csv_data.split('\n')]
+
+# Extracting column names from the first row
+columns = data_rows[0]
+
+# Creating a DataFrame
+global df
+df = pd.DataFrame(data_rows[1:], columns=columns)
 
 
-def make_event_log(index_cluster: int, index_caseid: int, index_timestamp: int = None):
-    # global df
-    print("XDDD")
-    pass
+def make_event_log(name_cluster: str = "Cluster", name_caseid: str = "Case ID", name_timestamp: str = "Timestamp"):
+    #TODO - delete duplicates (leave the last one) before taking selected columns [JK]
+    global df
+    if name_timestamp == "": #TODO - make fake timestamps to stop pm4py potential crash
+        selected_columns = df[[name_cluster, name_caseid]].copy()
+        selected_columns = pm4py.format_dataframe(selected_columns, case_id_column=name_caseid, activity_column=name_cluster)
+    else:
+        selected_columns = df[[name_timestamp, name_cluster, name_caseid]].copy()
+        formatted_columns = pm4py.format_dataframe(selected_columns, case_id=name_caseid, activity_key=name_cluster, timestamp_key=name_timestamp)
+        net, im, fm = pm4py.discover_petri_net_alpha(selected_columns, activity_key=name_cluster, case_id_key=name_caseid, timestamp_key=name_timestamp)
+        #pm4py.save_vis_petri_net(net, im, fm, 'petri_net.png')
+        heu_net = pm4py.discover_heuristics_net(selected_columns, activity_key=name_cluster, case_id_key=name_caseid, timestamp_key=name_timestamp)
+        #pm4py.save_vis_heuristics_net(heu_net, 'heu.png')
+        log = pm4py.convert_to_event_log(formatted_columns)
+    print(selected_columns.columns)
+    print(log)
+    

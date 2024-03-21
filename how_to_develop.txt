@@ -3,7 +3,7 @@ pip install -r requirements.txt        # eel's 'prod' requirements
 pip install eel
 cd app 
 npm install
-
+dodaj plik .env z zawartością BROWSER=none
 
 [tego poniżej raczej nie trzeba]
 pip install -r requirements-test.txt   # pytest and selenium
@@ -16,9 +16,9 @@ DEVELOPMENT:
 in first terminal run:
 cd app
 npm start
-[Strona odpalona w przegląarce nie będzie działać]
+
 
 in second terminal run:
 cd app
-python eel_CRA.py true
+python index.py true
 [powinno pojawić się okno z aplikacją]

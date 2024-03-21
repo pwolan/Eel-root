@@ -1,8 +1,9 @@
 import React from 'react';
 import './App.css';
-import Dropzone from './Dropzone'
 import Button from './Components/Button'
-
+import {BrowserRouter, Routes, Route} from "react-router-dom"
+import Upload from './Views/Upload';
+import Dataset from './Views/Dataset';
 
 
 // Point Eel web socket to the instance
@@ -53,23 +54,21 @@ const defPath = '~'
 // }
 
 const App = () => {
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('submit')
-    console.log(e)
-  }
   const handleTest = ()=>{
     eel.use_button('test')((message) => console.log(message))
   }
+
   return (
     <div className="container mx-auto flex flex-col items-center justify-center w-full  h-screen">
       <Button onClick={handleTest}>Test Funkcji na Backendzie</Button>
+      <BrowserRouter >
+        <Routes>
+          <Route path="/" element={<Upload/>} />
+          <Route path="/dataset" element={<Dataset/>} />
+        </Routes>
+      </BrowserRouter>
 
-      <div className="w-full flex flex-col items-center">
-        <h1 className='text-center text-3xl my-4'> Wczytaj plik csv </h1>
-        <Dropzone />
-        <Button onClick={handleSubmit} >Zatwierdź</Button>
-      </div>
+    
     </div>
   )
 }

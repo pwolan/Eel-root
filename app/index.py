@@ -11,12 +11,18 @@ from backend.event_log import make_event_log
 
 @eel.expose
 def use_button(x):
-    print(x)
-    make_event_log(9, 10, 1)
+    make_event_log()
     return "use_button success"
 
 # Use latest version of Eel from parent directory
 sys.path.insert(1, './')
+
+@eel.expose
+def submit_csv_import():
+    # TODO 
+    print("submit_csv_import")
+    something = "success"
+    return something
 
 
 @eel.expose  # Expose function to JavaScript
