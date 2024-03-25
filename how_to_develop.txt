@@ -1,9 +1,8 @@
 SETUP:
 pip install -r requirements.txt        # eel's 'prod' requirements
-pip install eel
 cd app 
 npm install
-dodaj plik .env z zawartością BROWSER=none
+
 
 [tego poniżej raczej nie trzeba]
 pip install -r requirements-test.txt   # pytest and selenium
@@ -16,7 +15,6 @@ DEVELOPMENT:
 in first terminal run:
 cd app
 npm start
-
 
 in second terminal run:
 cd app
