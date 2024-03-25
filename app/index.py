@@ -9,7 +9,7 @@ import wx
 import eel
 
 from backend.event_log import make_event_log
-
+import backend.index as bc
 @eel.expose
 def pick_file(wildcard="*"):
     print("pick_file")
@@ -21,7 +21,9 @@ def pick_file(wildcard="*"):
     else:
         path = None
     dialog.Destroy()
+    bc.read_path(path)
     # TODO zapisać path, żeby potem go użyć w submit_csv_import
+    # zrobione
     return path
 
 @eel.expose
@@ -29,12 +31,18 @@ def use_button(x):
     make_event_log()
     return "use_button success"
 
+@eel.expose
+def delete_duplicates_button():
+    bc.delete_records()
+    return bc.get_data()
+
 # Use latest version of Eel from parent directory
 sys.path.insert(1, './')
 
 @eel.expose
 def submit_csv_import():
     # TODO skorzystać z wcześniej otrzymanego path
+    bc.read_data()
     print("submit_csv_import")
     something = "success"
     return something

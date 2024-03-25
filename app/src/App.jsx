@@ -58,11 +58,15 @@ const App = () => {
   const handleTest = () => {
     eel.use_button('test')((message) => console.log(message))
   }
+  const handleDelete = () => {
+    eel.delete_duplicates_button()((message) => console.log(message))
+  }
 
   return (
     <RecoilRoot>
       <div className="container mx-auto flex flex-col items-center justify-center w-full  h-screen">
         <Button onClick={handleTest}>Test Funkcji na Backendzie</Button>
+        <Button onClick={handleDelete}>Usuń Powielające się rekordy</Button>
         <BrowserRouter >
           <Routes>
             <Route path="/" element={<Upload />} />
