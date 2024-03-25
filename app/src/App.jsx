@@ -1,20 +1,22 @@
 import React from 'react';
 import './App.css';
-import Dropzone from './Dropzone'
 import Button from './Components/Button'
-
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import Upload from './Views/Upload';
+import Dataset from './Views/Dataset';
+import { RecoilRoot } from 'recoil'
 
 
 // Point Eel web socket to the instance
 export const eel = window.eel
-eel.set_host( 'ws://localhost:8080' )
+eel.set_host('ws://localhost:8080')
 
 // Expose the `sayHelloJS` function to Python as `say_hello_js`
-function sayHelloJS( x ) {
-  console.log( 'Hello from ' + x )
+function sayHelloJS(x) {
+  console.log('Hello from ' + x)
 }
 // WARN: must use window.eel to keep parse-able eel.expose{...}
-window.eel.expose( sayHelloJS, 'say_hello_js' )
+window.eel.expose(sayHelloJS, 'say_hello_js')
 
 // Test anonymous function when minimized. See https://github.com/samuelhwilliams/Eel/issues/363
 function show_log(msg) {
@@ -23,8 +25,8 @@ function show_log(msg) {
 window.eel.expose(show_log, 'show_log')
 
 // Test calling sayHelloJS, then call the corresponding Python function
-sayHelloJS( 'Javascript World!' )
-eel.say_hello_py( 'Javascript World!' )
+sayHelloJS('Javascript World!')
+eel.say_hello_py('Javascript World!')
 
 // Set the default path. Would be a text input, but this is a basic example after all
 const defPath = '~'
@@ -53,24 +55,22 @@ const defPath = '~'
 // }
 
 const App = () => {
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('submit')
-    console.log(e)
-  }
-  const handleTest = ()=>{
+  const handleTest = () => {
     eel.use_button('test')((message) => console.log(message))
   }
-  return (
-    <div className="container mx-auto flex flex-col items-center justify-center w-full  h-screen">
-      <Button onClick={handleTest}>Test Funkcji na Backendzie</Button>
 
-      <div className="w-full flex flex-col items-center">
-        <h1 className='text-center text-3xl my-4'> Wczytaj plik csv </h1>
-        <Dropzone />
-        <Button onClick={handleSubmit} >Zatwierdź</Button>
+  return (
+    <RecoilRoot>
+      <div className="container mx-auto flex flex-col items-center justify-center w-full  h-screen">
+        <Button onClick={handleTest}>Test Funkcji na Backendzie</Button>
+        <BrowserRouter >
+          <Routes>
+            <Route path="/" element={<Upload />} />
+            <Route path="/dataset" element={<Dataset />} />
+          </Routes>
+        </BrowserRouter>
       </div>
-    </div>
+    </RecoilRoot>
   )
 }
 

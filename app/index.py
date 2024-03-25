@@ -5,18 +5,39 @@ import platform
 import random
 import sys
 
+import wx
 import eel
 
 from backend.event_log import make_event_log
 
 @eel.expose
+def pick_file(wildcard="*"):
+    print("pick_file")
+    app = wx.App(None)
+    style = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST
+    dialog = wx.FileDialog(None, 'Open', wildcard=wildcard, style=style)
+    if dialog.ShowModal() == wx.ID_OK:
+        path = dialog.GetPath()
+    else:
+        path = None
+    dialog.Destroy()
+    # TODO zapisać path, żeby potem go użyć w submit_csv_import
+    return path
+
+@eel.expose
 def use_button(x):
-    print(x)
-    make_event_log(9, 10, 1)
+    make_event_log()
     return "use_button success"
 
 # Use latest version of Eel from parent directory
 sys.path.insert(1, './')
+
+@eel.expose
+def submit_csv_import():
+    # TODO skorzystać z wcześniej otrzymanego path
+    print("submit_csv_import")
+    something = "success"
+    return something
 
 
 @eel.expose  # Expose function to JavaScript
@@ -32,17 +53,17 @@ def expand_user(folder):
     return '{}/*'.format(os.path.expanduser(folder))
 
 
-@eel.expose
-def pick_file(folder):
-    """Return a random file from the specified folder."""
-    folder = os.path.expanduser(folder)
-    if os.path.isdir(folder):
-        listFiles = [_f for _f in os.listdir(folder) if not os.path.isdir(os.path.join(folder, _f))]
-        if len(listFiles) == 0:
-            return 'No Files found in {}'.format(folder)
-        return random.choice(listFiles)
-    else:
-        return '{} is not a valid folder'.format(folder)
+# @eel.expose
+# def pick_file(folder):
+#     """Return a random file from the specified folder."""
+#     folder = os.path.expanduser(folder)
+#     if os.path.isdir(folder):
+#         listFiles = [_f for _f in os.listdir(folder) if not os.path.isdir(os.path.join(folder, _f))]
+#         if len(listFiles) == 0:
+#             return 'No Files found in {}'.format(folder)
+#         return random.choice(listFiles)
+#     else:
+#         return '{} is not a valid folder'.format(folder)
 
 
 def start_eel(develop):
