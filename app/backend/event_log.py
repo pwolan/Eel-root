@@ -48,6 +48,9 @@ df = pd.DataFrame(data_rows[1:], columns=columns)
 def make_event_log(name_cluster: str = "Cluster", name_caseid: str = "Case ID", name_timestamp: str = "Timestamp"):
     #TODO - delete duplicates (leave the last one) before taking selected columns [JK]
     global df
+    # pm4py requires name_cluster and name_caseid to be of type string
+    df[name_caseid] = df[name_caseid].astype(str)
+    df[name_cluster] = df[name_cluster].astype(str)
     if name_timestamp == "": #TODO - make fake timestamps to stop pm4py potential crash
         selected_columns = df[[name_cluster, name_caseid]].copy()
         selected_columns = pm4py.format_dataframe(selected_columns, case_id_column=name_caseid, activity_column=name_cluster)

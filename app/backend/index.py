@@ -1,4 +1,5 @@
 import pandas as pd
+import new_columns
 
 database = {
     "csv_files": []
@@ -9,8 +10,9 @@ path_file_csv = None
 
 def read_data():
     global temp_data, path_file_csv
-    temp_data = pd.read_csv(path_file_csv, sep=';')
-    temp_data = temp_data.sort_values(by='Timestamp')
+    temp_data = pd.read_csv(path_file_csv, sep=',', decimal=",", parse_dates=True)
+    if 'Timestamp' in temp_data.columns:
+        temp_data = temp_data.sort_values(by='Timestamp')
     print(temp_data)
 
 
@@ -28,3 +30,43 @@ def read_path(path: str):
 def get_data():
     global temp_data
     return temp_data.to_json()
+
+
+def get_dtype(column_name: str):
+    global temp_data
+    column_dtype = temp_data[column_name].dtype
+    return column_dtype
+
+
+def set_dtype(column_name: str, new_dtype: object):
+    global temp_data
+    temp_data[column_name] = temp_data[column_name].astype(new_dtype)
+
+
+def convert_to_datetime(column_name: str):
+    global temp_data
+    temp_data[column_name] = pd.to_datetime(temp_data[column_name], format="%d.%m.%Y %H:%M")
+
+
+def add_new_column(df: pd.DataFrame, new_column_name: str, instructions, default_val=0):
+    new_columns.new_column(df, new_column_name, instructions, default_val)
+
+
+"""
+
+# example usage - showcase of new_column syntax
+
+read_path("example.csv")
+read_data()
+convert_to_datetime("Timestamp")
+set_dtype("Zmienna G", str)
+if_instructions = [
+                   ("['Zmienna C'] > 50", "2 * ['Zmienna C']"),
+                   ("['Zmienna A'] > 160", "['Zmienna A'] - ['Zmienna C']"),
+                   # ("['Zmienna A'] > 0", "exit(0)") eval is UNSAFE if you use exit(0) in val the program will end
+                   ]
+add_new_column(temp_data, "nowa kolumna", if_instructions, 0)
+print(temp_data.head())
+print(temp_data.dtypes)
+
+"""
