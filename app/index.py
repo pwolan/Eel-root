@@ -61,6 +61,28 @@ def expand_user(folder):
     return '{}/*'.format(os.path.expanduser(folder))
 
 
+@eel.expose
+def set_data_type(column_name: str):
+    bc.set_dtype(column_name, str)
+    return bc.get_data()
+
+
+@eel.expose
+def visualize(file_path: str):
+    return bc.make_event_log_and_visualize(file_path)
+
+
+@eel.expose
+def add_column(column_name: str, cond_instructions, statement_instructions, default_value:object):
+    """
+    cond_instruction - lista warunków w ifie np. [ "['Zmienna C'] > 50", "['Zmienna A'] > 160"] ]
+    statement_instructions - lista wartości jesli if powyżej jest prawdziwy np. [1, 2]
+
+    """
+    bc.add_new_column(column_name, list(zip(cond_instructions, statement_instructions)), default_value)
+    return
+
+
 # @eel.expose
 # def pick_file(folder):
 #     """Return a random file from the specified folder."""
