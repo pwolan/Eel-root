@@ -8,8 +8,10 @@ import sys
 import wx
 import eel
 
+from backend.new_columns import new_column
 from backend.event_log import make_event_log
 import backend.index as bc
+
 @eel.expose
 def pick_file(wildcard="*"):
     print("pick_file")
@@ -28,7 +30,19 @@ def pick_file(wildcard="*"):
 
 @eel.expose
 def use_button(x):
-    make_event_log()
+
+    bc.convert_to_datetime("Timestamp")
+    bc.set_dtype("Zmienna G", str)
+    bc.make_event_log_and_visualize("net")
+
+    if_instructions = [
+        ("['Zmienna C'] > 50", "2 * ['Zmienna C']"),
+        ("['Zmienna A'] > 160", "['Zmienna A'] - ['Zmienna C']"),
+        # ("['Zmienna A'] > 0", "exit(0)") eval is UNSAFE if you use exit(0) in val the program will end
+    ]
+    bc.add_new_column("nowa kolumna", if_instructions, 0)
+    print(bc.get_data())
+
     return "use_button success"
 
 @eel.expose
