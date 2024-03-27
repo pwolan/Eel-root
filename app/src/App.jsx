@@ -4,6 +4,7 @@ import Button from './Components/Button'
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Upload from './Views/Upload';
 import Dataset from './Views/Dataset';
+import EventLog from './Views/EventLog';
 import { RecoilRoot } from 'recoil'
 
 
@@ -55,25 +56,18 @@ const defPath = '~'
 // }
 
 const App = () => {
-  const handleTest = () => {
-    eel.use_button('test')((message) => console.log(message))
-  }
-  const handleDelete = () => {
-    eel.delete_duplicates_button()((message) => console.log(message))
-  }
+
+
 
   return (
     <RecoilRoot>
-      <div className="container mx-auto flex flex-col items-center justify-center w-full  h-screen">
-        <Button onClick={handleTest}>Test Funkcji na Backendzie</Button>
-        <Button onClick={handleDelete}>Usuń Powielające się rekordy</Button>
-        <BrowserRouter >
-          <Routes>
-            <Route path="/" element={<Upload />} />
-            <Route path="/dataset" element={<Dataset />} />
-          </Routes>
-        </BrowserRouter>
-      </div>
+      <BrowserRouter >
+        <Routes>
+          <Route path="/" element={<Upload />} />
+          <Route path="/dataset" element={<Dataset />} />
+          <Route path='/eventlog' element={<EventLog />} />
+        </Routes>
+      </BrowserRouter>
     </RecoilRoot>
   )
 }

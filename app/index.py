@@ -13,19 +13,31 @@ from backend.event_log import make_event_log
 import backend.index as bc
 
 @eel.expose
+def dataset_to_eventlog():
+    #df = bc.get_dataframe()
+    bc.make_event_log_and_visualize(bc.read_path())
+    return bc.get_data()
+
+@eel.expose
+def get_eventlog():
+    return bc.get_eventlog()
+
+@eel.expose
+def get_dataset():
+    return bc.get_data()
+
+@eel.expose
 def pick_file(wildcard="*"):
     print("pick_file")
     app = wx.App(None)
-    style = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST
+    style = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST | wx.STAY_ON_TOP
     dialog = wx.FileDialog(None, 'Open', wildcard=wildcard, style=style)
     if dialog.ShowModal() == wx.ID_OK:
         path = dialog.GetPath()
     else:
         path = None
     dialog.Destroy()
-    bc.read_path(path)
-    # TODO zapisać path, żeby potem go użyć w submit_csv_import
-    # zrobione
+    bc.set_path(path)
     return path
 
 @eel.expose
@@ -44,11 +56,6 @@ def use_button(x):
     print(bc.get_data())
 
     return "use_button success"
-
-@eel.expose
-def delete_duplicates_button():
-    bc.delete_records()
-    return bc.get_data()
 
 # Use latest version of Eel from parent directory
 sys.path.insert(1, './')
@@ -96,18 +103,6 @@ def add_column(column_name: str, cond_instructions, statement_instructions, defa
     bc.add_new_column(column_name, list(zip(cond_instructions, statement_instructions)), default_value)
     return
 
-
-# @eel.expose
-# def pick_file(folder):
-#     """Return a random file from the specified folder."""
-#     folder = os.path.expanduser(folder)
-#     if os.path.isdir(folder):
-#         listFiles = [_f for _f in os.listdir(folder) if not os.path.isdir(os.path.join(folder, _f))]
-#         if len(listFiles) == 0:
-#             return 'No Files found in {}'.format(folder)
-#         return random.choice(listFiles)
-#     else:
-#         return '{} is not a valid folder'.format(folder)
 
 
 def start_eel(develop):

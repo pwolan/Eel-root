@@ -18,10 +18,12 @@ const Upload = () => {
 
 
     return (
-        <div className="w-full flex flex-col items-center">
-            <h1 className='text-center text-3xl my-4'> Wczytaj plik csv </h1>
-            <Dropzone  />
-            <Button onClick={handleSubmit} disabled={acceptedFile===null} >Zatwierdź</Button>
+        <div className="container mx-auto flex flex-col items-center justify-center w-full  h-screen">
+            <div className="w-full flex flex-col items-center">
+                <h1 className='text-center text-3xl my-4'> Wczytaj plik csv </h1>
+                <Dropzone />
+                <Button onClick={handleSubmit} disabled={acceptedFile === null} >Zatwierdź</Button>
+            </div>
         </div>)
 }
 

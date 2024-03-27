@@ -12,7 +12,7 @@ const Dropzone = () => {
     const [acceptedFile, setAcceptedFile] = useRecoilState(accepted_file)
 
     const handlePickFile = async () => {
-        const response = await eel.pick_file()()
+        const response = await eel.pick_file("CSV files (*.csv)|*.csv|TSV files (*.tsv)|*.tsv|Excel files (*.xls;*.xlsx)|*.xls;*.xlsx")()
         console.log(response)
         setAcceptedFile(response)
     }
