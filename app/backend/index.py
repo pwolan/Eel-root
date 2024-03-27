@@ -1,6 +1,7 @@
 import pandas as pd
-import new_columns
-import event_log
+from backend.new_columns import new_column
+from backend.event_log import make_event_log
+
 database = {
     "csv_files": []
 }
@@ -50,17 +51,17 @@ def convert_to_datetime(column_name: str):
 
 def add_new_column(new_column_name: str, instructions, default_val=0):
     global temp_data
-    new_columns.new_column(temp_data, new_column_name, instructions, default_val)
+    new_column(temp_data, new_column_name, instructions, default_val)
 
 
 def make_event_log_and_visualize(file_path: str):
     global temp_data
-    event_log.make_event_log(temp_data, "petri"+file_path+".png", "heu"+file_path+".png")
+    make_event_log(temp_data, "petri"+file_path+".png", "heu"+file_path+".png")
     return "petri"+file_path+".png"
 
 
-"""
 
+"""
 # example usage - showcase of new_column syntax
 
 read_path("example.csv")
@@ -78,5 +79,6 @@ add_new_column("nowa kolumna", if_instructions, 0)
 print(temp_data.head())
 print(temp_data.dtypes)
 make_event_log_and_visualize("net")
+
 
 """
