@@ -5,8 +5,11 @@ import platform
 import random
 import sys
 
+import scipy
 import wx
 import eel
+import pandas as pd
+import pm4py
 
 from backend.new_columns import new_column
 from backend.event_log import make_event_log
@@ -19,11 +22,16 @@ def dataset_to_eventlog(name_caseid):
     return bc.get_data()
 
 @eel.expose
+def get_datatypes():
+    return bc.get_dtypes()
+
+@eel.expose
 def get_eventlog():
     return bc.get_eventlog()
 
 @eel.expose
 def get_dataset():
+    print(bc.get_dtypes())
     return bc.get_data()
 
 @eel.expose

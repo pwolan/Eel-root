@@ -27,7 +27,7 @@ const EventLog = () => {
         <div className="p-10">
             <div className="py-10 flex flex-col items-center">
                 <Button onClick={handleDownloadEventLog} disabled={true} >Pobierz dane</Button>
-                <Button onClick={handleShowVisualization} disabled={true}>Wyświetl Wizualizacje</Button>
+                <Button onClick={handleShowVisualization} disabled={true}>Wyświetl wizualizacje</Button>
             </div>
             <div class="overflow-x-auto shadow-md sm:rounded-lg">
                 {schema === null ? (<div>loading...</div>) : (

@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+import json
 from backend.new_columns import new_column
 from backend.event_log import make_event_log
 
@@ -43,10 +45,15 @@ def get_dataframe():
     return temp_data
 
 
-def get_dtype(column_name: str):
+def get_dtypes():
     global temp_data
-    column_dtype = temp_data[column_name].dtype
-    return column_dtype
+    temp_list = []
+    for column in temp_data:
+        temp_list.append(temp_data[column].dtype.type)
+    #column_dtype = temp_data[column_name].dtype
+    temp_list = [dtype.__name__ for dtype in temp_list]
+    print(temp_list)
+    return json.dumps(temp_list)
 
 
 def set_dtype(column_name: str, new_dtype: object):

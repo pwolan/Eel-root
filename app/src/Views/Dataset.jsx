@@ -13,6 +13,9 @@ const Dataset = () => {
     useEffect(() => {
         eel.get_dataset()().then((dataset) => {
             const d = JSON.parse(dataset);
+            //const dd = JSON.parse(datatypes)
+            console.log(d);
+            //console.log(dd);
             setData(d.data);
             setSchema(d.schema);
         });
@@ -26,18 +29,18 @@ const Dataset = () => {
     return (
         <div className="p-10">
             <div className="py-10 flex flex-col items-center">
+            <Button onClick={handleEventLogCreation} >Utwórz dziennik zdarzeń</Button>
             <input
                     type="text"
                     value={textValue}
                     onChange={(e) => setTextValue(e.target.value)} 
-                    placeholder="Wpisz tutaj Case ID"
+                    className="border-2 border-gray-300 bg-white h-10 px-5 rounded-lg text-sm focus:outline-none mt-5"
                 />
-                <Button onClick={handleEventLogCreation} >Utwórz dziennik zdarzeń</Button>
             </div>
             <div class="overflow-x-auto shadow-md sm:rounded-lg">
                 {schema === null ? (<div>loading...</div>) : (
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700  bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 {schema.fields.map((field) => (
                                     <th scope="col" class="px-6 py-3" key={field.name}>
