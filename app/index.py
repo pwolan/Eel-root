@@ -13,9 +13,9 @@ from backend.event_log import make_event_log
 import backend.index as bc
 
 @eel.expose
-def dataset_to_eventlog():
+def dataset_to_eventlog(name_caseid):
     #df = bc.get_dataframe()
-    bc.make_event_log_and_visualize(bc.read_path())
+    bc.make_event_log_and_visualize(bc.read_path(), name_caseid)
     return bc.get_data()
 
 @eel.expose

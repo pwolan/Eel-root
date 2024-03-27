@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 const Dataset = () => {
     const [data, setData] = React.useState([]);
     const [schema, setSchema] = React.useState(null);
+    const [textValue, setTextValue] = React.useState("Case ID");
     const navigator = useNavigate();
     useEffect(() => {
         eel.get_dataset()().then((dataset) => {
@@ -18,13 +19,19 @@ const Dataset = () => {
     }, []);
     
     const handleEventLogCreation = async () => {
-        await eel.dataset_to_eventlog()()
+        await eel.dataset_to_eventlog(textValue)()
         return navigator("/eventlog")
     }
 
     return (
         <div className="p-10">
             <div className="py-10 flex flex-col items-center">
+            <input
+                    type="text"
+                    value={textValue}
+                    onChange={(e) => setTextValue(e.target.value)} 
+                    placeholder="Wpisz tutaj Case ID"
+                />
                 <Button onClick={handleEventLogCreation} >Utwórz dziennik zdarzeń</Button>
             </div>
             <div class="overflow-x-auto shadow-md sm:rounded-lg">

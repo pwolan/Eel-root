@@ -64,9 +64,9 @@ def add_new_column(new_column_name: str, instructions, default_val=0):
     new_column(temp_data, new_column_name, instructions, default_val)
 
 
-def make_event_log_and_visualize(file_path: str):
+def make_event_log_and_visualize(file_path: str, name_caseid: str):
     global temp_data, temp_data_event_log
-    temp_data_event_log = make_event_log(temp_data, "petri"+file_path+".png", "heu"+file_path+".png")
+    temp_data_event_log = make_event_log(temp_data, "petri"+file_path+".png", "heu"+file_path+".png", name_caseid=name_caseid)
     print(temp_data_event_log)
     return "petri"+file_path+".png"
 
