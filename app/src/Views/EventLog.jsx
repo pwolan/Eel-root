@@ -1,31 +1,33 @@
-import React from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { eel } from "../App";
 import Button from "../Components/Button";
-import { useNavigate } from "react-router-dom";
+const EventLog = () => {
 
-
-const Dataset = () => {
-    const [data, setData] = React.useState([]);
-    const [schema, setSchema] = React.useState(null);
+    const [data, setData] = useState([]);
+    const [schema, setSchema] = useState(null);
     const navigator = useNavigate();
     useEffect(() => {
-        eel.get_dataset()().then((dataset) => {
-            const d = JSON.parse(dataset);
+        eel.get_eventlog()().then((evlog) => {
+            const d = JSON.parse(evlog);
+            console.log(d);
             setData(d.data);
             setSchema(d.schema);
-        });
+        })
     }, []);
-    
-    const handleEventLogCreation = async () => {
-        await eel.dataset_to_eventlog()()
-        return navigator("/eventlog")
+
+    const handleDownloadEventLog = async () => {
+     //TODO
+    }
+    const handleShowVisualization = async () => {
+        //TODO
     }
 
-    return (
+        return (
         <div className="p-10">
             <div className="py-10 flex flex-col items-center">
-                <Button onClick={handleEventLogCreation} >Utwórz dziennik zdarzeń</Button>
+                <Button onClick={handleDownloadEventLog} disabled={true} >Pobierz dane</Button>
+                <Button onClick={handleShowVisualization} disabled={true}>Wyświetl Wizualizacje</Button>
             </div>
             <div class="overflow-x-auto shadow-md sm:rounded-lg">
                 {schema === null ? (<div>loading...</div>) : (
@@ -52,12 +54,10 @@ const Dataset = () => {
                             ))}
                         </tbody>
                     </table>
-
                 )}
-
             </div>
         </div>
     )
 }
 
-export default Dataset;
+export default EventLog;

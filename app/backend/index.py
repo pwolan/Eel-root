@@ -5,7 +5,9 @@ from backend.event_log import make_event_log
 database = {
     "csv_files": []
 }
+
 temp_data = pd.DataFrame()
+temp_data_event_log = pd.DataFrame()
 path_file_csv = None
 
 
@@ -19,18 +21,26 @@ def read_data():
 
 def delete_records():
     global temp_data
-    temp_data = temp_data.drop_duplicates(subset=['Case ID', 'Cluster'], keep='first')
+    temp_data = temp_data.drop_duplicates(subset=['Case ID', 'Cluster'], keep='last')
     print(temp_data)
 
 
-def read_path(path: str):
+def set_path(path: str):
     global path_file_csv
     path_file_csv = path
+
+def read_path():
+    global path_file_csv
+    return path_file_csv
 
 
 def get_data():
     global temp_data
-    return temp_data.to_json()
+    return temp_data.to_json(orient='table')
+
+def get_dataframe():
+    global temp_data
+    return temp_data
 
 
 def get_dtype(column_name: str):
@@ -55,9 +65,16 @@ def add_new_column(new_column_name: str, instructions, default_val=0):
 
 
 def make_event_log_and_visualize(file_path: str):
-    global temp_data
-    make_event_log(temp_data, "petri"+file_path+".png", "heu"+file_path+".png")
+    global temp_data, temp_data_event_log
+    temp_data_event_log = make_event_log(temp_data, "petri"+file_path+".png", "heu"+file_path+".png")
+    print(temp_data_event_log)
     return "petri"+file_path+".png"
+
+def get_eventlog():
+    global temp_data_event_log
+    temp = temp_data_event_log.drop(columns=["case:concept:name", "concept:name", "time:timestamp", "@@index", "@@case_index"])
+    temp["Timestamp"] = temp["Timestamp"].apply(lambda x: str(x))
+    return temp.to_json(orient='table')
 
 
 
