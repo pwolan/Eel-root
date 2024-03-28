@@ -5,11 +5,11 @@ import platform
 import random
 import sys
 
-import scipy
+
 import wx
 import eel
 import pandas as pd
-import pm4py
+# import pm4py
 
 from backend.new_columns import new_column
 from backend.event_log import make_event_log
@@ -66,7 +66,7 @@ def use_button(x):
     return "use_button success"
 
 # Use latest version of Eel from parent directory
-sys.path.insert(1, './')
+sys.path.insert(1, '../')
 
 @eel.expose
 def submit_csv_import():
@@ -125,7 +125,7 @@ def start_eel(develop):
         # app = 'chrome-app'
         page = 'index.html'
 
-    eel.init(directory, ['.tsx', '.ts', '.jsx', '.js', '.html'])
+    eel.init(directory, ['.jsx', '.js', '.html', '.css'])
 
     # These will be queued until the first connection is made, but won't be repeated on a page reload
     # say_hello_py('Python World!' + str(page))
@@ -139,7 +139,10 @@ def start_eel(develop):
         size=(1280, 800),
     )
     try:
-        eel.start(page, **eel_kwargs)
+        if develop:
+            eel.start(page, **eel_kwargs)
+        else:
+            eel.start(page, default_path="/", **eel_kwargs)
 
     except EnvironmentError:
         # If Chrome isn't found, fallback to Microsoft Edge on Win10 or greater

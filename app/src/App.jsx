@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import Button from './Components/Button'
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { HashRouter, Routes, Route } from "react-router-dom"
 import Upload from './Views/Upload';
 import Dataset from './Views/Dataset';
 import EventLog from './Views/EventLog';
@@ -33,41 +33,18 @@ eel.say_hello_py('Javascript World!')
 const defPath = '~'
 
 
-// class App extends Component {
-//   state = {
-//     message: `Click button to choose a random file from the user's system`,
-//     path: defPath,
-//   }
-
-//   pickFile = () => {
-//     eel.pick_file(defPath)(( message) => this.setState( { message } ) )
-//   }
-
-//   render() {
-//     eel.expand_user(defPath)(( path) => this.setState( { path } ) )
-//     return (
-
-//         <div className="App">
-//           <h1 className='text-blue-600'> Eel React Example </h1>
-//           <Button color="red">Pick a file</Button>
-//         </div>
-//     );
-//   }
-// }
-
 const App = () => {
-
 
 
   return (
     <RecoilRoot>
-      <BrowserRouter >
+      <HashRouter >
         <Routes>
           <Route path="/" element={<Upload />} />
           <Route path="/dataset" element={<Dataset />} />
           <Route path='/eventlog' element={<EventLog />} />
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </RecoilRoot>
   )
 }
