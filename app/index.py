@@ -12,13 +12,13 @@ import pandas as pd
 # import pm4py
 
 from backend.new_columns import new_column
-from backend.event_log import make_event_log
 import backend.index as bc
 
 @eel.expose
 def dataset_to_eventlog(name_caseid):
     #df = bc.get_dataframe()
-    bc.make_event_log_and_visualize(bc.read_path(), name_caseid)
+    bc.make_event_log(name_caseid)
+    #bc.event_log_statistics()
     return bc.get_data()
 
 @eel.expose
@@ -31,7 +31,6 @@ def get_eventlog():
 
 @eel.expose
 def get_dataset():
-    print(bc.get_dtypes())
     return bc.get_data()
 
 @eel.expose

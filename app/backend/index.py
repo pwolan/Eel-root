@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
 import json
+import pm4py
 from backend.new_columns import new_column
-from backend.event_log import make_event_log
+from backend.event_log import make_event_log_object
 
 database = {
     "csv_files": []
@@ -52,8 +53,9 @@ def get_dtypes():
         temp_list.append(temp_data[column].dtype.type)
     #column_dtype = temp_data[column_name].dtype
     temp_list = [dtype.__name__ for dtype in temp_list]
-    print(temp_list)
-    return json.dumps(temp_list)
+    cleaned_data_types = [data_type.replace('64', '').replace('_', '') for data_type in temp_list]
+    print(cleaned_data_types)
+    return json.dumps(cleaned_data_types)
 
 
 def set_dtype(column_name: str, new_dtype: object):
@@ -70,12 +72,34 @@ def add_new_column(new_column_name: str, instructions, default_val=0):
     global temp_data
     new_column(temp_data, new_column_name, instructions, default_val)
 
+def make_event_log(name_caseid: str):
+    global temp_data, temp_data_event_log
+    temp_data_event_log = make_event_log_object(temp_data, name_caseid=name_caseid, name_timestamp="Timesta")
 
 def make_event_log_and_visualize(file_path: str, name_caseid: str):
-    global temp_data, temp_data_event_log
-    temp_data_event_log = make_event_log(temp_data, "petri"+file_path+".png", "heu"+file_path+".png", name_caseid=name_caseid)
-    print(temp_data_event_log)
+    #TODO only visualization, do not change make_event_log, create new function!
+    # global temp_data, temp_data_event_log
+    # temp_data_event_log = make_event_log(temp_data, "petri"+file_path+".png", "heu"+file_path+".png", name_caseid=name_caseid)
+    # print(temp_data_event_log)
     return "petri"+file_path+".png"
+
+def event_log_statistics():
+    global temp_data_event_log
+    start_activities = pm4py.get_start_activities(temp_data_event_log)
+    counted_cases = 0
+    for start_activity in start_activities:
+        counted_cases += start_activities[start_activity]
+    variants = pm4py.stats.get_variants(temp_data_event_log)
+    counted_case_length = {}
+    for variant in variants:
+        if len(variant) in counted_case_length:
+            counted_case_length[len(variant)] += variants[variant]
+        else:
+            counted_case_length[len(variant)] = variants[variant]
+    print(start_activities, counted_cases)
+    print(pm4py.get_end_activities(temp_data_event_log))
+    print(variants, counted_case_length)
+    #print(pm4py.stats.get_variants_paths_duration(temp_data_event_log))
 
 def get_eventlog():
     global temp_data_event_log
