@@ -16,7 +16,7 @@ path_file_csv = None
 
 def read_data():
     global temp_data, path_file_csv
-    temp_data = pd.read_csv(path_file_csv, sep=',', decimal=",", parse_dates=True)
+    temp_data = pd.read_csv(path_file_csv, sep=None, decimal=",", parse_dates=True, engine='python')
     if 'Timestamp' in temp_data.columns:
         temp_data = temp_data.sort_values(by='Timestamp')
     print(temp_data)
