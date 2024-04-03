@@ -15,7 +15,10 @@ from backend.new_columns import new_column
 import backend.index as bc
 
 @eel.expose
-def dataset_to_eventlog(name_caseid):
+def dataset_to_eventlog(columns):
+    name_caseid = columns['caseId']
+    name_timestamp = columns['timestamp']
+    name_cluster = columns['cluster']
     #df = bc.get_dataframe()
     bc.make_event_log(name_caseid)
     #bc.event_log_statistics()
@@ -46,6 +49,18 @@ def pick_file(wildcard="*"):
     dialog.Destroy()
     bc.set_path(path)
     return path
+
+@eel.expose
+def change_datatypes(changes):
+    statuses = {}
+    for change in changes:
+        try:
+            bc.set_dtype(change['name'], change['type'])
+            statuses[change['name']] = "success"
+        except:
+            print("Error in changing datatype")
+            statuses[change['name']] = "error"
+    return statuses
 
 @eel.expose
 def use_button(x):
