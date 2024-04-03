@@ -5,6 +5,7 @@ import { HashRouter, Routes, Route } from "react-router-dom"
 import Upload from './Views/Upload';
 import Dataset from './Views/Dataset';
 import EventLog from './Views/EventLog';
+import Model from './Views/Model';
 import { RecoilRoot } from 'recoil'
 
 
@@ -43,6 +44,7 @@ const App = () => {
           <Route path="/" element={<Upload />} />
           <Route path="/dataset" element={<Dataset />} />
           <Route path='/eventlog' element={<EventLog />} />
+          <Route path='/model' element={<Model />} />
         </Routes>
       </HashRouter>
     </RecoilRoot>
