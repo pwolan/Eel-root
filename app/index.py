@@ -48,6 +48,20 @@ def pick_file(wildcard="*"):
     return path
 
 @eel.expose
+def visualize_inductive(file_path: str):
+    bc.visualize(file_path, 'inductive')
+
+@eel.expose
+def visualize_heuristic(file_path: str):
+    bc.visualize(file_path, 'heuristic')
+
+@eel.expose
+def get_model_stats():
+    res = bc.model_statistics()
+    print(res)
+    return res
+
+@eel.expose
 def use_button(x):
 
     bc.convert_to_datetime("Timestamp")

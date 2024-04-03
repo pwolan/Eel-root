@@ -19,6 +19,9 @@ const EventLog = () => {
     const handleGoToDataset = async () => {
         return navigator("/dataset")
     }
+      const handleGoToModel = async () => {
+        return navigator("/model")
+    }
 
     const handleDownloadEventLog = async () => {
      //TODO
@@ -32,6 +35,7 @@ const EventLog = () => {
             <div className="py-10 flex flex-col items-center">
                 <Button onClick={handleDownloadEventLog} disabled={true} >Pobierz dane</Button>
                 <Button onClick={handleShowVisualization} disabled={true}>Wyświetl wizualizacje</Button>
+                <Button onClick={handleGoToModel}>Model</Button>
                 <Button onClick={handleGoToDataset}>Powrót</Button>
             </div>
             <div class="overflow-x-auto shadow-md sm:rounded-lg">
