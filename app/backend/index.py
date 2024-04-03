@@ -12,7 +12,7 @@ database = {
 temp_data = pd.DataFrame()
 temp_data_event_log = pd.DataFrame()
 path_file_csv = None
-
+net, im, fm = None, None, None
 
 def read_data():
     global temp_data, path_file_csv
@@ -76,12 +76,34 @@ def make_event_log(name_caseid: str):
     global temp_data, temp_data_event_log
     temp_data_event_log = make_event_log_object(temp_data, name_caseid=name_caseid, name_timestamp="Timesta")
 
-def make_event_log_and_visualize(file_path: str, name_caseid: str):
+
+def visualize(file_path: str, algos: str, name_cluster: str = "Cluster", name_caseid: str = "Case ID", name_timestamp: str = "Timestamp"):
     #TODO only visualization, do not change make_event_log, create new function!
     # global temp_data, temp_data_event_log
     # temp_data_event_log = make_event_log(temp_data, "petri"+file_path+".png", "heu"+file_path+".png", name_caseid=name_caseid)
     # print(temp_data_event_log)
-    return "petri"+file_path+".png"
+    global temp_data_event_log
+    global net, im, fm
+    if algos == 'inductive':
+        net, im, fm = pm4py.discover_petri_net_inductive(temp_data_event_log)
+    elif algos == 'heuristic':
+        net, im, fm = pm4py.discover_petri_net_heuristics(temp_data_event_log, activity_key=name_cluster,
+                                                          case_id_key=name_caseid, timestamp_key=name_timestamp)
+    else:
+        return
+    pm4py.save_vis_petri_net(net, im, fm, file_path + algos + '_miner.png')
+    log = pm4py.convert_to_event_log(temp_data_event_log)
+    return file_path + algos + '_miner.png'
+
+
+def model_statistics(name_cluster: str = "Cluster", name_caseid: str = "Case ID", name_timestamp: str = "Timestamp"):
+    global temp_data_event_log, path_file_csv
+    global net, im, fm
+    return pm4py.fitness_alignments(temp_data_event_log, net, im, fm, activity_key=name_cluster, case_id_key=name_caseid,
+                             timestamp_key=name_timestamp)
+
+
+
 
 def event_log_statistics():
     global temp_data_event_log
