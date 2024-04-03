@@ -54,6 +54,8 @@ def get_dtypes():
     #column_dtype = temp_data[column_name].dtype
     temp_list = [dtype.__name__ for dtype in temp_list]
     cleaned_data_types = [data_type.replace('64', '').replace('_', '') for data_type in temp_list]
+    cleaned_data_types = list(dict.fromkeys(cleaned_data_types))
+
     print(cleaned_data_types)
     return json.dumps(cleaned_data_types)
 
