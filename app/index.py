@@ -20,6 +20,7 @@ def dataset_to_eventlog(columns):
     name_timestamp = columns['timestamp']
     name_cluster = columns['cluster']
     #df = bc.get_dataframe()
+    print(name_timestamp, name_cluster)
     bc.make_event_log(name_caseid)
     #bc.event_log_statistics()
     return bc.get_data()
@@ -62,6 +63,7 @@ def change_datatypes(changes):
             statuses[change['name']] = "error"
     return statuses
 
+@eel.expose
 def visualize_inductive(file_path: str):
     bc.visualize(file_path, 'inductive')
 

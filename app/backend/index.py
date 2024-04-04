@@ -101,6 +101,9 @@ def visualize(file_path: str, algos: str, name_cluster: str = "Cluster", name_ca
 def model_statistics(name_cluster: str = "Cluster", name_caseid: str = "Case ID", name_timestamp: str = "Timestamp"):
     global temp_data_event_log, path_file_csv
     global net, im, fm
+    if net is None:
+        print("uruchom najpierw jeden z algorytmów")
+        return None
     return pm4py.fitness_alignments(temp_data_event_log, net, im, fm, activity_key=name_cluster, case_id_key=name_caseid,
                              timestamp_key=name_timestamp)
 

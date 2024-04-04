@@ -3,7 +3,6 @@ import pm4py
 import eel
 
 def make_event_log_object(df: pd.DataFrame, name_cluster: str = "Cluster", name_caseid: str = "Case ID", name_timestamp: str = "Timestamp"):
-    #TODO - delete duplicates (leave the last one) before taking selected columns [JK]
 
     # pm4py requires name_cluster and name_caseid to be of type string
     df[name_caseid] = df[name_caseid].astype(str)
