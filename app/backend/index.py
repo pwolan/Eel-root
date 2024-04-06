@@ -13,18 +13,26 @@ temp_data = pd.DataFrame()
 temp_data_event_log = pd.DataFrame()
 path_file_csv = None
 net, im, fm = None, None, None
+case_id = "Case ID"  # Case ID name in temp_data_event_log
+cluster_id = "Cluster"  # Cluster ID name in temp_data_event_log
+timestamp_id = "Timestamp"
+# Timestamp name in temp_data; Timestamp name in temp_data_event_log is always "Timestamp"
+# Timestamp in temp_data_event_log = timestamp_id in temp_data if timestamp_id in temp_data else made from index column
+
 
 def read_data():
     global temp_data, path_file_csv
+    global timestamp_id
     temp_data = pd.read_csv(path_file_csv, sep=None, decimal=",", parse_dates=True, engine='python')
-    if 'Timestamp' in temp_data.columns:
-        temp_data = temp_data.sort_values(by='Timestamp')
+    if timestamp_id in temp_data.columns:
+        temp_data = temp_data.sort_values(by=timestamp_id)
     print(temp_data)
 
 
 def delete_records():
     global temp_data
-    temp_data = temp_data.drop_duplicates(subset=['Case ID', 'Cluster'], keep='last')
+    global case_id, cluster_id
+    temp_data = temp_data.drop_duplicates(subset=[case_id, cluster_id], keep='last')
     print(temp_data)
 
 
@@ -44,6 +52,21 @@ def get_data():
 def get_dataframe():
     global temp_data
     return temp_data
+
+
+def set_case_id(new_case_id: str):
+    global case_id
+    case_id = new_case_id
+
+
+def set_cluster_id(new_cluster_id: str):
+    global cluster_id
+    cluster_id = new_cluster_id
+
+
+def set_timestamp_id(new_timestamp: str):
+    global timestamp_id
+    timestamp_id = new_timestamp
 
 
 def get_dtypes():
@@ -74,23 +97,28 @@ def add_new_column(new_column_name: str, instructions, default_val=0):
     global temp_data
     new_column(temp_data, new_column_name, instructions, default_val)
 
-def make_event_log(name_caseid: str):
+def make_event_log():
     global temp_data, temp_data_event_log
-    temp_data_event_log = make_event_log_object(temp_data, name_caseid=name_caseid, name_timestamp="Timesta")
+    global case_id, cluster_id, timestamp_id
+    print(case_id, cluster_id, timestamp_id)
+    temp_data_event_log = make_event_log_object(temp_data, name_cluster=cluster_id, name_caseid=case_id, name_timestamp=timestamp_id)
 
 
-def visualize(file_path: str, algos: str, name_cluster: str = "Cluster", name_caseid: str = "Case ID", name_timestamp: str = "Timestamp"):
+def visualize(file_path: str, algos: str):
     #TODO only visualization, do not change make_event_log, create new function!
     # global temp_data, temp_data_event_log
     # temp_data_event_log = make_event_log(temp_data, "petri"+file_path+".png", "heu"+file_path+".png", name_caseid=name_caseid)
     # print(temp_data_event_log)
     global temp_data_event_log
     global net, im, fm
+    global case_id, cluster_id
     if algos == 'inductive':
-        net, im, fm = pm4py.discover_petri_net_inductive(temp_data_event_log)
+        net, im, fm = pm4py.discover_petri_net_inductive(temp_data_event_log, activity_key=cluster_id,
+                                                          case_id_key=case_id, timestamp_key="Timestamp")
+
     elif algos == 'heuristic':
-        net, im, fm = pm4py.discover_petri_net_heuristics(temp_data_event_log, activity_key=name_cluster,
-                                                          case_id_key=name_caseid, timestamp_key=name_timestamp)
+        net, im, fm = pm4py.discover_petri_net_heuristics(temp_data_event_log, activity_key=cluster_id,
+                                                          case_id_key=case_id, timestamp_key="Timestamp")
     else:
         return
     pm4py.save_vis_petri_net(net, im, fm, file_path + algos + '_miner.png')
@@ -101,11 +129,12 @@ def visualize(file_path: str, algos: str, name_cluster: str = "Cluster", name_ca
 def model_statistics(name_cluster: str = "Cluster", name_caseid: str = "Case ID", name_timestamp: str = "Timestamp"):
     global temp_data_event_log, path_file_csv
     global net, im, fm
+    global case_id, cluster_id
     if net is None:
         print("uruchom najpierw jeden z algorytmów")
         return None
-    return pm4py.fitness_alignments(temp_data_event_log, net, im, fm, activity_key=name_cluster, case_id_key=name_caseid,
-                             timestamp_key=name_timestamp)
+    return pm4py.fitness_alignments(temp_data_event_log, net, im, fm, activity_key=cluster_id, case_id_key=case_id,
+                             timestamp_key="Timestamp")
 
 
 
@@ -128,6 +157,7 @@ def event_log_statistics():
     print(variants, counted_case_length)
     #print(pm4py.stats.get_variants_paths_duration(temp_data_event_log))
 
+
 def get_eventlog():
     global temp_data_event_log
     temp = temp_data_event_log.drop(columns=["case:concept:name", "concept:name", "time:timestamp", "@@index", "@@case_index"])
@@ -135,6 +165,19 @@ def get_eventlog():
     return temp.to_json(orient='table')
 
 
+def column_diff_df(first_column: str, second_column: str):
+    global temp_data_event_log
+    df_filtered = temp_data_event_log[temp_data_event_log[first_column] != temp_data_event_log[second_column]]
+    return df_filtered
+
+
+def calculate_percentage_of_different_values(first_column: str, second_column: str):
+    global temp_data_event_log
+    total_records = len(temp_data_event_log)
+    df_filtered = temp_data_event_log[temp_data_event_log[first_column] != temp_data_event_log[second_column]]
+    different_records = len(df_filtered)
+    percentage = (different_records / total_records) * 100
+    return percentage
 
 """
 # example usage - showcase of new_column syntax

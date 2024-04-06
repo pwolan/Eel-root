@@ -19,9 +19,8 @@ def make_event_log_object(df: pd.DataFrame, name_cluster: str = "Cluster", name_
         selected_columns.drop(columns=['index'], inplace=True)
         formatted_columns = pm4py.format_dataframe(selected_columns, case_id=name_caseid, activity_key=name_cluster, timestamp_key="Timestamp")
     else:
-        selected_columns = df[[name_timestamp, name_cluster, name_caseid]].copy()
-        selected_columns["Timestamp"] = selected_columns[name_timestamp]
-        selected_columns.drop(columns=[name_timestamp], inplace=True)
+        selected_columns = df[[name_cluster, name_caseid]].copy()
+        selected_columns["Timestamp"] = df[name_timestamp]
         selected_columns = selected_columns.drop_duplicates(subset=[name_caseid, name_cluster], keep='last')
         formatted_columns = pm4py.format_dataframe(selected_columns, case_id=name_caseid, activity_key=name_cluster, timestamp_key="Timestamp")
     # net, im, fm = pm4py.discover_petri_net_alpha(formatted_columns, activity_key=name_cluster, case_id_key=name_caseid, timestamp_key=name_timestamp)
