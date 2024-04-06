@@ -16,14 +16,26 @@ import backend.index as bc
 
 @eel.expose
 def dataset_to_eventlog(columns):
-    name_caseid = columns['caseId']
-    name_timestamp = columns['timestamp']
-    name_cluster = columns['cluster']
     #df = bc.get_dataframe()
-    print(name_timestamp, name_cluster)
-    bc.make_event_log(name_caseid)
+    bc.make_event_log()
     #bc.event_log_statistics()
     return bc.get_data()
+
+
+@eel.expose
+def set_case_id(new_case_id: str):
+    return bc.set_case_id(new_case_id)
+
+
+@eel.expose
+def set_cluster_id(new_cluster_id: str):
+    return bc.set_cluster_id(new_cluster_id)
+
+
+@eel.expose
+def set_timestamp_id(new_timestamp: str):
+    return bc.set_timestamp_id(new_timestamp)
+
 
 @eel.expose
 def get_datatypes():
@@ -32,6 +44,8 @@ def get_datatypes():
 @eel.expose
 def get_eventlog():
     return bc.get_eventlog()
+
+
 
 @eel.expose
 def get_dataset():
