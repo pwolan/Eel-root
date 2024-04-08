@@ -7,18 +7,22 @@ import Select from 'react-select';
 import DatasetInputs from "../Components/DatasetInputs";
 import { useRecoilValue } from "recoil";
 import { dataset_inputs_values } from "../state/atoms";
+import { tabelarization_values } from "../state/atoms";
 
 const Dataset = () => {
     const [data, setData] = React.useState([]);
     const [schema, setSchema] = React.useState(null);
-    // const [textValue, setTextValue] = React.useState("Case ID");
-    const [options, setOptions] = React.useState([]); // [ {label: "string", value: "string"}, {label: "int", value: "int"}
+   
+    const [options, setOptions] = React.useState([]);
     const inputValues = useRecoilValue(dataset_inputs_values)
+    const inputValues2 = useRecoilValue(tabelarization_values)
     const navigator = useNavigate();
     useEffect(() => {
         eel.get_dataset()().then((dataset) => {
             const d = JSON.parse(dataset);
             console.log(d);
+            d.schema.fields = d.schema.fields.filter((el)=> el.name !== "index");
+            d.data = d.data.map(({index, ...rest})=>({...rest}))
             setData(d.data);
             setSchema(d.schema);
 
@@ -57,16 +61,25 @@ const Dataset = () => {
             return {...prev}
         })
     }
+
+    const handleTabelarization = async () => {
+        console.log(inputValues2)
+        await eel.dataset_to_tabelarisation(inputValues2)()
+        return navigator("/tabelarisation")
+    }
+
+
    
     return (
         <div className="p-4">
             <div>
-            <Button onClick={()=>navigator("/")} className=" !w-20 ">Wróć</Button>
+                <Button onClick={()=>navigator("/")} className=" !w-20 ">Powrót</Button>
             </div>
             <div className="py-10 flex flex-col items-center">
-            <Button onClick={handleEventLogCreation} >Utwórz dziennik zdarzeń</Button>
-            <Button onClick={handleSubmitTypes} >Zatwierdź zmianę typów</Button>
-            <DatasetInputs />
+                <Button onClick={handleEventLogCreation} >Utwórz dziennik zdarzeń</Button>
+                <Button onClick={handleSubmitTypes} >Zatwierdź zmianę typów</Button>
+                <Button onClick={handleTabelarization}>Zrób Tabelaryzację</Button>
+                <DatasetInputs />
             </div>
             <div class="overflow-x-auto shadow-md sm:rounded-lg">
                 {schema === null ? (<div>wczytywanie danych...</div>) : (
@@ -74,14 +87,13 @@ const Dataset = () => {
                         <thead className="text-xs text-gray-700  bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 {schema.fields.map((field) => (
-                                    <th scope="col" class="px-6 py-3" key={field.name}>
+                                    <th scope="col" class="px-4 py-3" key={field.name}>
                                         <div>{field.name}</div>
-                                        {/*po zapisie <div>{field.type}</div> */}
                                         <div>
                                             <Select 
                                                 classNames={{
                                                     control: (state)=> field.status === "changed" ? "!border-yellow-700" : (field.status === "error" ? "!border-red-700" : ""),
-                                                    indicatorsContainer: (state)=>" !hidden "
+                                                    indicatorsContainer: (state)=>" !hidden ",
                                                 }}
                                                 defaultValue={{label: field.type, value: field.type}}
                                                 options={options}
@@ -100,7 +112,7 @@ const Dataset = () => {
                             {data.map((row) => (
                                 <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700" key={row.index}>
                                     {Object.values(row).map((value) => (
-                                        <td class="px-6 py-4" key={`${value}xx`}>
+                                        <td class="px-4 py-4" key={`${value}xx`}>
                                             {value}
                                         </td>
                                     ))}

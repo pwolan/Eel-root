@@ -15,7 +15,7 @@ def make_event_log_object(df: pd.DataFrame, name_cluster: str = "Cluster", name_
         selected_columns.reset_index(inplace=True)
         selected_columns = selected_columns.drop_duplicates(subset=[name_caseid, name_cluster], keep='last')
         selected_columns['Timestamp'] = base_date + pd.to_timedelta(selected_columns['index'], unit='D')
-
+        
         selected_columns.drop(columns=['index'], inplace=True)
         formatted_columns = pm4py.format_dataframe(selected_columns, case_id=name_caseid, activity_key=name_cluster, timestamp_key="Timestamp")
     else:

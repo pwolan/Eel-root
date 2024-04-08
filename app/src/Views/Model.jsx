@@ -3,12 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { eel } from "../App";
 import Button from "../Components/Button";
 const Model = () => {
-    const [data, setData] = useState([]);
-    const [schema, setSchema] = useState(null);
+    const [visualizationPath, setVisualizationPath] = useState(null)
+    const [isButtonActive, setIsButtonActive] = useState(false);
     const navigator = useNavigate();
     useEffect(() => {
-            setData("ok");
-            setSchema("ok");
+
     }, []);
 
 
@@ -17,23 +16,35 @@ const Model = () => {
     }
 
     const handleShowVisualizationInductive = async () => {
-        eel.visualize_inductive('petri_') // returns path to .png file
+        const path = await eel.visualize_inductive()() // returns path to .png file
+        setVisualizationPath(path)
+        setIsButtonActive(true)
+        console.log(path)
     }
     const handleShowVisualizationHeuristic = async () => {
-        eel.visualize_heuristic('petri_') // returns path to .png file
+        const path = await eel.visualize_heuristic()() // returns path to .png file
+        setVisualizationPath(path)
+        setIsButtonActive(true)
+        console.log(path)
     }
     const handleShowStats = async () => {
         eel.get_model_stats()  // returns statistics
     }
-    // TO DO button handleShowStats should be inactive before one of the algorithms is run
 
-        return (
+    return (
         <div className="p-10">
+            <div>
+                <Button onClick={handleGoToEventLog} className=" !w-24 ">Powrót</Button>
+            </div>
             <div className="py-10 flex flex-col items-center">
                 <Button onClick={handleShowVisualizationInductive}>Algorytm Inductive Miner</Button>
                 <Button onClick={handleShowVisualizationHeuristic}>Algorytm Heuristic Miner</Button>
-                <Button onClick={handleShowStats}>Wyświetl statystyki</Button>
-                <Button onClick={handleGoToEventLog}>Powrót</Button>
+                <Button onClick={handleShowStats} disabled={!isButtonActive}>Wyświetl statystyki</Button>
+            </div>
+            <div>
+                {visualizationPath}
+                {/* {visualizationPath && <img src={`%PUBLIC_URL%/${visualizationPath}`} alt="visualization" />} */}
+                {visualizationPath && <img src={`/image.png`} alt="visualization" />}
             </div>
         </div>
     )

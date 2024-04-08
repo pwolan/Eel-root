@@ -2,41 +2,36 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { eel } from "../App";
 import Button from "../Components/Button";
-const EventLog = () => {
-
+const Tabelarisation = () => {
     const [data, setData] = useState([]);
     const [schema, setSchema] = useState(null);
     const navigator = useNavigate();
+    const [percentage, setPercentage] = useState(null)
     useEffect(() => {
-        eel.get_eventlog()().then((evlog) => {
+        eel.get_tabelarisation_data()().then((evlog) => {
             const d = JSON.parse(evlog);
             console.log(d);
             setData(d.data);
             setSchema(d.schema);
         })
+        eel.get_tabelarisation_percentage()().then((percentage) => {
+            setPercentage(percentage)
+        });
     }, []);
 
     const handleGoToDataset = async () => {
         return navigator("/dataset")
     }
-      const handleGoToModel = async () => {
-        return navigator("/model")
-    }
-
-    const handleDownloadEventLog = async () => {
-     //TODO
-    }
-    const handleShowVisualization = async () => {
-        return navigator("/visualization")
-    }
-
-        return (
+    return (
         <div className="p-10">
             <div className="py-10 flex flex-col items-center">
-                <Button onClick={handleDownloadEventLog} disabled={true} >Pobierz dane</Button>
+                {/* <Button onClick={handleDownloadEventLog} disabled={true} >Pobierz dane</Button> */}
                 {/* <Button onClick={handleShowVisualization} >Wyświetl wizualizacje</Button> */}
-                <Button onClick={handleGoToModel}>Model</Button>
+                {/* <Button onClick={handleGoToModel}>Model</Button> */}
                 <Button onClick={handleGoToDataset}>Powrót</Button>
+            </div>
+            <div>
+                <label>{percentage}</label>
             </div>
             <div class="overflow-x-auto shadow-md sm:rounded-lg">
                 {schema === null ? (<div>loading...</div>) : (
@@ -66,7 +61,7 @@ const EventLog = () => {
                 )}
             </div>
         </div>
-    )
+    );
 }
 
-export default EventLog;
+export default Tabelarisation;
