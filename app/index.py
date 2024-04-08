@@ -4,7 +4,7 @@ import os
 import platform
 import random
 import sys
-
+import bottle
 
 import wx
 import eel
@@ -181,6 +181,8 @@ def add_column(column_name: str, cond_instructions, statement_instructions, defa
 
 
 
+
+
 def start_eel(develop):
     """Start Eel with either production or development configuration."""
 
@@ -206,16 +208,27 @@ def start_eel(develop):
         port=8080,
         size=(1280, 800),
     )
+
+
+    app = bottle.Bottle()
+
+    @app.route("/static/<filepath:path>")
+    def static(filepath):
+        return bottle.static_file(filepath, root="static")
+    
+    
+
+
     try:
         if develop:
-            eel.start(page, **eel_kwargs)
+            eel.start(page,app=app, **eel_kwargs)
         else:
-            eel.start(page, default_path="/", **eel_kwargs)
+            eel.start(page, default_path="/",app=app, **eel_kwargs)
 
     except EnvironmentError:
         # If Chrome isn't found, fallback to Microsoft Edge on Win10 or greater
         if sys.platform in ['win32', 'win64'] and int(platform.release()) >= 10:
-            eel.start(page, mode='edge', **eel_kwargs)
+            eel.start(page, mode='edge', app=app, **eel_kwargs)
         else:
             raise
 
