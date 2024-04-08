@@ -24,17 +24,19 @@ const EventLog = () => {
     }
 
     const handleDownloadEventLog = async () => {
-     //TODO
+        eel.download_eventlog()().then((ee) => {
+            console.log(ee)
+        })
     }
-    const handleShowVisualization = async () => {
-        return navigator("/visualization")
+    const handleShowStatistics = async () => {
+        return navigator("/eventstatistics")
     }
 
         return (
         <div className="p-10">
             <div className="py-10 flex flex-col items-center">
-                <Button onClick={handleDownloadEventLog} disabled={true} >Pobierz dane</Button>
-                {/* <Button onClick={handleShowVisualization} >Wyświetl wizualizacje</Button> */}
+                <Button onClick={handleDownloadEventLog} >Pobierz dane</Button>
+                <Button onClick={handleShowStatistics} disabled={true} >Wyświetl statystyki dziennika</Button>
                 <Button onClick={handleGoToModel}>Model</Button>
                 <Button onClick={handleGoToDataset}>Powrót</Button>
             </div>

@@ -8,6 +8,7 @@ import EventLog from './Views/EventLog';
 import Model from './Views/Model';
 import { RecoilRoot } from 'recoil'
 import Tabelarisation from './Views/Tabelarisation';
+import EventStatistics from './Views/EventStatistics';
 
 
 // Point Eel web socket to the instance
@@ -47,6 +48,7 @@ const App = () => {
           <Route path='/eventlog' element={<EventLog />} />
           <Route path='/model' element={<Model />} />
           <Route path='/tabelarisation' element={<Tabelarisation/>} />
+          <Route path='/eventstatistics' element={<EventStatistics/>} />
         </Routes>
       </HashRouter>
     </RecoilRoot>

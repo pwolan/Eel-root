@@ -25,10 +25,22 @@ cluster_id_2 = "Cluster 2"
 # Timestamp in temp_data_event_log = timestamp_id in temp_data if timestamp_id in temp_data else made from index column
 
 
-def read_data():
+def read_data(separator: str):
     global temp_data, path_file_csv
     global timestamp_id
-    temp_data = pd.read_csv(path_file_csv, sep=None, decimal=",", parse_dates=True, engine='python')
+    temp_data = pd.read_csv(path_file_csv, sep=separator, decimal=",", parse_dates=True, engine='python')
+    # List of possible separators
+    # possible_separators = ['\t', ';', ',', '.']  # Add other separators as needed
+
+    # Try reading the file with different separators
+    # for separator in possible_separators:
+    #     try:
+    #         temp_data = pd.read_csv(path_file_csv, sep=separator, decimal=",", parse_dates=True)
+    #         # If reading succeeds, break the loop
+    #         break
+    #     except pd.errors.ParserError:
+    #         # If reading fails, try the next separator
+    #         continue
     if timestamp_id in temp_data.columns:
         temp_data = temp_data.sort_values(by=timestamp_id)
     print(temp_data)
@@ -74,10 +86,12 @@ def set_timestamp_id(new_timestamp: str):
     timestamp_id = new_timestamp
 
 def set_cluster_id_1(new_cluster_id_1: str):
+    print(new_cluster_id_1)
     global cluster_id_1
     cluster_id_1 = new_cluster_id_1
 
 def set_cluster_id_2(new_cluster_id_2: str):
+    print(new_cluster_id_2)
     global cluster_id_2
     cluster_id_2 = new_cluster_id_2
 
@@ -174,8 +188,12 @@ def event_log_statistics():
 def download_event_log(): #TODO test this shit
     global temp_data_event_log
     directory = os.path.dirname(path_file_csv)
+    print(temp_data_event_log)
     dataframe = pm4py.convert_to_dataframe(temp_data_event_log)
-    dataframe.to_csv(directory + "\\" +'exported.csv')
+    print(dataframe)
+    df_first_three = dataframe.iloc[:, :3]
+    print(df_first_three)
+    df_first_three.to_csv(directory + "\\" +'exported_event_log.csv', index=False)
 
 
 def get_eventlog():
@@ -200,8 +218,10 @@ def calculate_percentage_of_different_values(first_column: str, second_column: s
     return percentage
 
 
-def make_tabelarisation():
+def make_tabelarisation(columns):
     global cluster_id_1, cluster_id_2, temp_tabelarization_data, temp_tabelarization_percentage
+    cluster_id_1 = columns[0]
+    cluster_id_2 = columns[1]
     column_diff = column_diff_df(cluster_id_1, cluster_id_2)
     temp_tabelarization_percentage = calculate_percentage_of_different_values(cluster_id_1, cluster_id_2)
     temp_tabelarization_data = temp_data.drop(columns=[cluster_id_1, cluster_id_2])

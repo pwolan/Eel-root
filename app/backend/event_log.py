@@ -2,6 +2,20 @@ import pandas as pd
 import pm4py
 import eel
 
+def delete_duplicates(df: pd.DataFrame, name_cluster: str = "Cluster", name_caseid: str = "Case ID"):
+    indices_to_delete = []
+
+    for index, row in df.iterrows():
+        if index < len(df) - 1:
+            next_row = df.loc[index + 1]
+            if row[name_cluster] == next_row[name_cluster] and row[name_caseid] == next_row[name_caseid]:
+                indices_to_delete.append(index)
+
+    df = df.drop(indices_to_delete)
+
+    return df
+
+
 def make_event_log_object(df: pd.DataFrame, name_cluster: str = "Cluster", name_caseid: str = "Case ID", name_timestamp: str = "Timestamp"):
 
     # pm4py requires name_cluster and name_caseid to be of type string
@@ -13,7 +27,8 @@ def make_event_log_object(df: pd.DataFrame, name_cluster: str = "Cluster", name_
         base_date = pd.Timestamp('2024-01-01')
         selected_columns = df[[name_cluster, name_caseid]].copy()
         selected_columns.reset_index(inplace=True)
-        selected_columns = selected_columns.drop_duplicates(subset=[name_caseid, name_cluster], keep='last')
+        selected_columns = delete_duplicates(selected_columns, name_cluster, name_caseid)
+        #selected_columns = selected_columns.drop_duplicates(subset=[name_caseid, name_cluster], keep='last')
         selected_columns['Timestamp'] = base_date + pd.to_timedelta(selected_columns['index'], unit='D')
         
         selected_columns.drop(columns=['index'], inplace=True)
@@ -21,7 +36,8 @@ def make_event_log_object(df: pd.DataFrame, name_cluster: str = "Cluster", name_
     else:
         selected_columns = df[[name_cluster, name_caseid]].copy()
         selected_columns["Timestamp"] = df[name_timestamp]
-        selected_columns = selected_columns.drop_duplicates(subset=[name_caseid, name_cluster], keep='last')
+        selected_columns = delete_duplicates(selected_columns, name_cluster, name_caseid)
+        #selected_columns = selected_columns.drop_duplicates(subset=[name_caseid, name_cluster], keep='last')
         formatted_columns = pm4py.format_dataframe(selected_columns, case_id=name_caseid, activity_key=name_cluster, timestamp_key="Timestamp")
     # net, im, fm = pm4py.discover_petri_net_alpha(formatted_columns, activity_key=name_cluster, case_id_key=name_caseid, timestamp_key=name_timestamp)
     # pm4py.save_vis_petri_net(net, im, fm, petri_net_path)

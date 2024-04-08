@@ -23,7 +23,7 @@ def dataset_to_eventlog(columns):
 
 @eel.expose
 def dataset_to_tabelarisation(columns):
-    return bc.make_tabelarisation()
+    return bc.make_tabelarisation(columns)
 
 @eel.expose
 def get_tabelarisation_data():
@@ -56,7 +56,6 @@ def set_cluster_id_1(new_cluster_id_1: str):
 def set_cluster_id_2(new_cluster_id_2: str):
     return bc.set_cluster_id_2(new_cluster_id_2)
 
-
 @eel.expose
 def get_datatypes():
     return bc.get_dtypes()
@@ -64,6 +63,10 @@ def get_datatypes():
 @eel.expose
 def get_eventlog():
     return bc.get_eventlog()
+
+@eel.expose
+def download_eventlog():
+    bc.download_event_log()
 
 
 @eel.expose
@@ -135,7 +138,8 @@ sys.path.insert(1, '../')
 @eel.expose
 def submit_csv_import():
     # TODO skorzystać z wcześniej otrzymanego path
-    bc.read_data()
+    separator = None # TODO wyrzucić wybór separatora na frontend (None jest Defaultowy)
+    bc.read_data(separator) 
     print("submit_csv_import")
     something = "success"
     return something
