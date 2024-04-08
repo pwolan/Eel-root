@@ -41,7 +41,7 @@ const App = () => {
 
   return (
     <RecoilRoot>
-      <HashRouter >
+      <HashRouter>
         <Routes>
           <Route path="/" element={<Upload />} />
           <Route path="/dataset" element={<Dataset />} />

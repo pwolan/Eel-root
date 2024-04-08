@@ -205,8 +205,10 @@ def get_eventlog():
 
 def column_diff_df(first_column: str, second_column: str):
     global temp_data
-    df_filtered = temp_data[temp_data[first_column] != temp_data[second_column]]
-    return df_filtered
+    # df_filtered = temp_data[temp_data[first_column] != temp_data[second_column]]
+    nowy_df = pd.DataFrame()
+    nowy_df['column_difference'] = temp_data.apply(lambda row: row[first_column] == row[second_column], axis=1)
+    return nowy_df
 
 
 def calculate_percentage_of_different_values(first_column: str, second_column: str):
@@ -220,12 +222,11 @@ def calculate_percentage_of_different_values(first_column: str, second_column: s
 
 def make_tabelarisation(columns):
     global cluster_id_1, cluster_id_2, temp_tabelarization_data, temp_tabelarization_percentage
-    cluster_id_1 = columns[0]
-    cluster_id_2 = columns[1]
     column_diff = column_diff_df(cluster_id_1, cluster_id_2)
+    print(column_diff)
     temp_tabelarization_percentage = calculate_percentage_of_different_values(cluster_id_1, cluster_id_2)
-    temp_tabelarization_data = temp_data.drop(columns=[cluster_id_1, cluster_id_2])
-    temp_tabelarization_data.insert(4, "column_difference", column_diff)
+    temp_tabelarization_data = temp_data[['ID', cluster_id_1, cluster_id_2]].copy()
+    temp_tabelarization_data['column_difference'] = column_diff['column_difference'].to_list()
     return temp_tabelarization_data.to_json(orient="table"), temp_tabelarization_percentage
 
 def get_tabelarisation_data():
