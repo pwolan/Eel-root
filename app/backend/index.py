@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import json
 import pm4py
+import os
 from backend.new_columns import new_column
 from backend.event_log import make_event_log_object
 
@@ -11,11 +12,15 @@ database = {
 
 temp_data = pd.DataFrame()
 temp_data_event_log = pd.DataFrame()
+temp_tabelarization_data = pd.DataFrame()
+temp_tabelarization_percentage = None
 path_file_csv = None
 net, im, fm = None, None, None
 case_id = "Case ID"  # Case ID name in temp_data_event_log
 cluster_id = "Cluster"  # Cluster ID name in temp_data_event_log
 timestamp_id = "Timestamp"
+cluster_id_1 = "Cluster 1"
+cluster_id_2 = "Cluster 2"
 # Timestamp name in temp_data; Timestamp name in temp_data_event_log is always "Timestamp"
 # Timestamp in temp_data_event_log = timestamp_id in temp_data if timestamp_id in temp_data else made from index column
 
@@ -68,6 +73,14 @@ def set_timestamp_id(new_timestamp: str):
     global timestamp_id
     timestamp_id = new_timestamp
 
+def set_cluster_id_1(new_cluster_id_1: str):
+    global cluster_id_1
+    cluster_id_1 = new_cluster_id_1
+
+def set_cluster_id_2(new_cluster_id_2: str):
+    global cluster_id_2
+    cluster_id_2 = new_cluster_id_2
+
 
 def get_dtypes():
     global temp_data
@@ -104,12 +117,13 @@ def make_event_log():
     temp_data_event_log = make_event_log_object(temp_data, name_cluster=cluster_id, name_caseid=case_id, name_timestamp=timestamp_id)
 
 
-def visualize(file_path: str, algos: str):
+def visualize(algos: str):
     #TODO only visualization, do not change make_event_log, create new function!
     # global temp_data, temp_data_event_log
     # temp_data_event_log = make_event_log(temp_data, "petri"+file_path+".png", "heu"+file_path+".png", name_caseid=name_caseid)
     # print(temp_data_event_log)
     global temp_data_event_log
+    global path_file_csv
     global net, im, fm
     global case_id, cluster_id
     if algos == 'inductive':
@@ -121,9 +135,11 @@ def visualize(file_path: str, algos: str):
                                                           case_id_key=case_id, timestamp_key="Timestamp")
     else:
         return
-    pm4py.save_vis_petri_net(net, im, fm, file_path + algos + '_miner.png')
+    directory = os.path.dirname(path_file_csv)
+    name = "petri_" + algos + "_miner.png"
+    pm4py.save_vis_petri_net(net, im, fm, directory + "\\" + name)
     log = pm4py.convert_to_event_log(temp_data_event_log)
-    return file_path + algos + '_miner.png'
+    return directory + "\\" + name
 
 
 def model_statistics(name_cluster: str = "Cluster", name_caseid: str = "Case ID", name_timestamp: str = "Timestamp"):
@@ -135,8 +151,6 @@ def model_statistics(name_cluster: str = "Cluster", name_caseid: str = "Case ID"
         return None
     return pm4py.fitness_alignments(temp_data_event_log, net, im, fm, activity_key=cluster_id, case_id_key=case_id,
                              timestamp_key="Timestamp")
-
-
 
 
 def event_log_statistics():
@@ -157,6 +171,12 @@ def event_log_statistics():
     print(variants, counted_case_length)
     #print(pm4py.stats.get_variants_paths_duration(temp_data_event_log))
 
+def download_event_log(): #TODO test this shit
+    global temp_data_event_log
+    directory = os.path.dirname(path_file_csv)
+    dataframe = pm4py.convert_to_dataframe(temp_data_event_log)
+    dataframe.to_csv(directory + "\\" +'exported.csv')
+
 
 def get_eventlog():
     global temp_data_event_log
@@ -166,18 +186,35 @@ def get_eventlog():
 
 
 def column_diff_df(first_column: str, second_column: str):
-    global temp_data_event_log
-    df_filtered = temp_data_event_log[temp_data_event_log[first_column] != temp_data_event_log[second_column]]
+    global temp_data
+    df_filtered = temp_data[temp_data[first_column] != temp_data[second_column]]
     return df_filtered
 
 
 def calculate_percentage_of_different_values(first_column: str, second_column: str):
-    global temp_data_event_log
-    total_records = len(temp_data_event_log)
-    df_filtered = temp_data_event_log[temp_data_event_log[first_column] != temp_data_event_log[second_column]]
+    global temp_data
+    total_records = len(temp_data)
+    df_filtered = temp_data[temp_data[first_column] != temp_data[second_column]]
     different_records = len(df_filtered)
     percentage = (different_records / total_records) * 100
     return percentage
+
+
+def make_tabelarisation():
+    global cluster_id_1, cluster_id_2, temp_tabelarization_data, temp_tabelarization_percentage
+    column_diff = column_diff_df(cluster_id_1, cluster_id_2)
+    temp_tabelarization_percentage = calculate_percentage_of_different_values(cluster_id_1, cluster_id_2)
+    temp_tabelarization_data = temp_data.drop(columns=[cluster_id_1, cluster_id_2])
+    temp_tabelarization_data.insert(4, "column_difference", column_diff)
+    return temp_tabelarization_data.to_json(orient="table"), temp_tabelarization_percentage
+
+def get_tabelarisation_data():
+    return temp_tabelarization_data.to_json(orient="table")
+
+def get_tabelarisation_percentage():
+    return temp_tabelarization_percentage
+    
+
 
 """
 # example usage - showcase of new_column syntax

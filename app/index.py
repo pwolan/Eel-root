@@ -21,10 +21,22 @@ def dataset_to_eventlog(columns):
     #bc.event_log_statistics()
     return bc.get_data()
 
+@eel.expose
+def dataset_to_tabelarisation(columns):
+    return bc.make_tabelarisation()
+
+@eel.expose
+def get_tabelarisation_data():
+    return bc.get_tabelarisation_data()
+
 
 @eel.expose
 def set_case_id(new_case_id: str):
     return bc.set_case_id(new_case_id)
+
+@eel.expose
+def get_tabelarisation_percentage():
+    return bc.get_tabelarisation_percentage()
 
 
 @eel.expose
@@ -36,6 +48,14 @@ def set_cluster_id(new_cluster_id: str):
 def set_timestamp_id(new_timestamp: str):
     return bc.set_timestamp_id(new_timestamp)
 
+@eel.expose
+def set_cluster_id_1(new_cluster_id_1: str):
+    return bc.set_cluster_id_1(new_cluster_id_1)
+
+@eel.expose
+def set_cluster_id_2(new_cluster_id_2: str):
+    return bc.set_cluster_id_2(new_cluster_id_2)
+
 
 @eel.expose
 def get_datatypes():
@@ -44,7 +64,6 @@ def get_datatypes():
 @eel.expose
 def get_eventlog():
     return bc.get_eventlog()
-
 
 
 @eel.expose
@@ -78,12 +97,13 @@ def change_datatypes(changes):
     return statuses
 
 @eel.expose
-def visualize_inductive(file_path: str):
-    bc.visualize(file_path, 'inductive')
+def visualize_inductive():
+    return bc.visualize('inductive')
+    
 
 @eel.expose
-def visualize_heuristic(file_path: str):
-    bc.visualize(file_path, 'heuristic')
+def visualize_heuristic():
+    return bc.visualize('heuristic')
 
 @eel.expose
 def get_model_stats():
