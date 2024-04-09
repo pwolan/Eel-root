@@ -11,6 +11,8 @@ const Tabelarisation = () => {
         eel.get_tabelarisation_data()().then((evlog) => {
             const d = JSON.parse(evlog);
             console.log(d);
+            d.schema.fields = d.schema.fields.filter((el)=> el.name !== "index");
+            d.data = d.data.map(({index, ...rest})=>({...rest}))
             setData(d.data);
             setSchema(d.schema);
         })
@@ -23,15 +25,12 @@ const Tabelarisation = () => {
         return navigator("/dataset")
     }
     return (
-        <div className="p-10">
-            <div className="py-10 flex flex-col items-center">
-                {/* <Button onClick={handleDownloadEventLog} disabled={true} >Pobierz dane</Button> */}
-                {/* <Button onClick={handleShowVisualization} >Wyświetl wizualizacje</Button> */}
-                {/* <Button onClick={handleGoToModel}>Model</Button> */}
-                <Button onClick={handleGoToDataset}>Powrót</Button>
-            </div>
+        <div className="p-4">
             <div>
-                <label>{percentage}</label>
+                <Button onClick={handleGoToDataset} className=' !w-24 '>Powrót</Button>
+            </div>
+            <div  className="py-10 flex flex-col items-center">
+                <label className="block text-gray-700 text-sm font-bold">Procent takich samych wierszy: {percentage}%</label>
             </div>
             <div class="overflow-x-auto shadow-md sm:rounded-lg">
                 {schema === null ? (<div>loading...</div>) : (

@@ -1,16 +1,16 @@
 import React from "react";
 import { useRecoilState } from 'recoil'
-import { dataset_inputs_values, tabelarization_values } from "../state/atoms";
+import { choice1_atom, choice2_atom, dataset_inputs_values } from "../state/atoms";
 import { eel } from "../App";
 import Select from 'react-select';
 
 
 const DatasetInputs = () => {
     const [values, setValues] = useRecoilState(dataset_inputs_values)
-    const [tabValues, setTabValues] = useRecoilState(tabelarization_values)
     const [columns, setColumns] = React.useState([])
-    const [choice1, setChoice1] = React.useState(null)
-    const [choice2, setChoice2] = React.useState(null)
+
+    const [choice1, setChoice1]  = useRecoilState(choice1_atom)
+    const [choice2, setChoice2]  = useRecoilState(choice2_atom)
 
     React.useEffect(() => {
         eel.get_dataset()().then((dataset) => {
@@ -44,14 +44,10 @@ const DatasetInputs = () => {
     const handleCluster_1_Change = ({value}, {name}) => {
         setChoice1(value);
         eel.set_cluster_id_1(value)();
-        // setTabValues((prev) => ({...prev, cluster_1: e.target.value}))
-        // eel.set_cluster_id_1(e.target.value)
     }
     const handleCluster_2_Change = ({value}, {name}) => {
         setChoice2(value);
         eel.set_cluster_id_2(value)();
-        // setTabValues((prev) => ({...prev, cluster_2: e.target.value}))
-        // eel.set_cluster_id_2(e.target.value)
     }
     
     return (<>

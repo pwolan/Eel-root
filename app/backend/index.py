@@ -28,6 +28,7 @@ cluster_id_2 = "Cluster 2"
 def read_data(separator: str):
     global temp_data, path_file_csv
     global timestamp_id
+    print("Separator", repr(separator), "Separator")
     temp_data = pd.read_csv(path_file_csv, sep=separator, decimal=",", parse_dates=True, engine='python')
     # List of possible separators
     # possible_separators = ['\t', ';', ',', '.']  # Add other separators as needed
@@ -149,11 +150,12 @@ def visualize(algos: str):
                                                           case_id_key=case_id, timestamp_key="Timestamp")
     else:
         return
-    directory = os.path.dirname(path_file_csv)
-    name = "petri_" + algos + "_miner.png"
-    pm4py.save_vis_petri_net(net, im, fm, directory + "\\" + name)
-    log = pm4py.convert_to_event_log(temp_data_event_log)
-    return directory + "\\" + name
+    directory_name = os.path.basename(os.path.dirname(path_file_csv))
+    filename_without_extension = os.path.splitext(os.path.basename(path_file_csv))[0]
+    name = directory_name + "_" + filename_without_extension + "_petri_" + algos + "_miner.png"  
+    pm4py.save_vis_petri_net(net, im, fm, "static" + "\\" + name)
+    #log = pm4py.convert_to_event_log(temp_data_event_log)
+    return name
 
 
 def model_statistics(name_cluster: str = "Cluster", name_caseid: str = "Case ID", name_timestamp: str = "Timestamp"):
@@ -188,12 +190,11 @@ def event_log_statistics():
 def download_event_log(): #TODO test this shit
     global temp_data_event_log
     directory = os.path.dirname(path_file_csv)
-    print(temp_data_event_log)
     dataframe = pm4py.convert_to_dataframe(temp_data_event_log)
-    print(dataframe)
     df_first_three = dataframe.iloc[:, :3]
-    print(df_first_three)
-    df_first_three.to_csv(directory + "\\" +'exported_event_log.csv', index=False)
+    filename_without_extension = os.path.splitext(os.path.basename(path_file_csv))[0]
+    name = filename_without_extension + "exported_event_log.csv"
+    df_first_three.to_csv(directory + "\\" + name, index=False)
 
 
 def get_eventlog():
@@ -214,23 +215,27 @@ def column_diff_df(first_column: str, second_column: str):
 def calculate_percentage_of_different_values(first_column: str, second_column: str):
     global temp_data
     total_records = len(temp_data)
-    df_filtered = temp_data[temp_data[first_column] != temp_data[second_column]]
-    different_records = len(df_filtered)
+    # df_filtered = temp_data.filter(temp_data[first_column] != temp_data[second_column])
+    different_records = temp_data[first_column].eq(temp_data[second_column]).sum()
     percentage = (different_records / total_records) * 100
     return percentage
 
 
-def make_tabelarisation(columns):
+def make_tabelarisation():
     global cluster_id_1, cluster_id_2, temp_tabelarization_data, temp_tabelarization_percentage
     column_diff = column_diff_df(cluster_id_1, cluster_id_2)
-    print(column_diff)
     temp_tabelarization_percentage = calculate_percentage_of_different_values(cluster_id_1, cluster_id_2)
-    temp_tabelarization_data = temp_data[['ID', cluster_id_1, cluster_id_2]].copy()
-    temp_tabelarization_data['column_difference'] = column_diff['column_difference'].to_list()
+    if cluster_id_1 == cluster_id_2:
+        temp_tabelarization_data = temp_data[['ID', cluster_id_1]].copy()
+    else:
+        temp_tabelarization_data = temp_data[['ID', cluster_id_1, cluster_id_2]].copy()
+    temp_tabelarization_data['Czy są takie same?'] = column_diff['column_difference'].to_list()
     return temp_tabelarization_data.to_json(orient="table"), temp_tabelarization_percentage
 
 def get_tabelarisation_data():
-    return temp_tabelarization_data.to_json(orient="table")
+    df = temp_tabelarization_data.copy()
+    df['Czy są takie same?'] = df['Czy są takie same?'].astype(str)
+    return df.to_json(orient = "table")
 
 def get_tabelarisation_percentage():
     return temp_tabelarization_percentage

@@ -34,11 +34,11 @@ const EventLog = () => {
 
         return (
         <div className="p-10">
+            <Button onClick={handleGoToDataset} className=" !w-24">Powrót</Button>
             <div className="py-10 flex flex-col items-center">
                 <Button onClick={handleDownloadEventLog} >Pobierz dane</Button>
                 <Button onClick={handleShowStatistics} disabled={true} >Wyświetl statystyki dziennika</Button>
                 <Button onClick={handleGoToModel}>Model</Button>
-                <Button onClick={handleGoToDataset}>Powrót</Button>
             </div>
             <div class="overflow-x-auto shadow-md sm:rounded-lg">
                 {schema === null ? (<div>loading...</div>) : (

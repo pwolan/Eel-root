@@ -4,6 +4,7 @@ import { eel } from "../App";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Button from "../Components/Button";
 import Controls from "../Components/Controls";
+import Stats from "../Components/Stats";
 
 const Model = () => {
     const [visualizationPath, setVisualizationPath] = useState(null)
@@ -42,8 +43,9 @@ const Model = () => {
             <div className="py-10 flex justify-center items-center">
                 <Button onClick={handleShowVisualizationInductive}>Algorytm Inductive Miner</Button>
                 <Button onClick={handleShowVisualizationHeuristic}>Algorytm Heuristic Miner</Button>
-                <Button onClick={handleShowStats} disabled={!isButtonActive}>Wyświetl statystyki</Button>
+                {/* <Button onClick={handleShowStats} disabled={!isButtonActive}>Wyświetl statystyki</Button> */}
             </div>
+            <Stats path={visualizationPath}/>
             <div className="flex-1 flex flex-col">
                
                 {visualizationPath && (
@@ -52,7 +54,7 @@ const Model = () => {
                             <>
                                 <Controls/>
                                 <TransformComponent wrapperStyle={{flex: 1}}>
-                                    <img src={`http://localhost:8080/static/image.png`} alt="visualization" />
+                                    <img src={`http://localhost:8080/static/${visualizationPath}`} alt="visualization" />
                                 </TransformComponent>
                             </>
 
