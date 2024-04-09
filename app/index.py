@@ -22,8 +22,8 @@ def dataset_to_eventlog(columns):
     return bc.get_data()
 
 @eel.expose
-def dataset_to_tabelarisation(columns):
-    return bc.make_tabelarisation(columns)
+def dataset_to_tabelarisation():
+    return bc.make_tabelarisation()
 
 @eel.expose
 def get_tabelarisation_data():
@@ -155,9 +155,9 @@ def new_column():
 sys.path.insert(1, '../')
 
 @eel.expose
-def submit_csv_import():
+def submit_csv_import(separator_value):
     # TODO skorzystać z wcześniej otrzymanego path
-    separator = None # TODO wyrzucić wybór separatora na frontend (None jest Defaultowy)
+    separator = separator_value # TODO wyrzucić wybór separatora na frontend (None jest Defaultowy)
     bc.read_data(separator) 
     print("submit_csv_import")
     something = "success"

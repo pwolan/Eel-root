@@ -15,10 +15,12 @@ export const dataset_inputs_values = atom({
     }
 })
 
-export const tabelarization_values = atom({
-    key: 'tabelarization_values',
-    default: {
-        cluster_1: 'Case ID',
-        cluster_2: 'Cluster',
-    }
+export const choice1_atom = atom({
+    key: 'choice1',
+    default: null
+}) 
+
+export const choice2_atom = atom({
+    key: 'choice2',
+    default: null
 })

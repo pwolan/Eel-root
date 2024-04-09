@@ -6,23 +6,26 @@ import { useNavigate } from "react-router-dom";
 import Select from 'react-select';
 import DatasetInputs from "../Components/DatasetInputs";
 import { useRecoilValue } from "recoil";
-import { dataset_inputs_values } from "../state/atoms";
-import { tabelarization_values } from "../state/atoms";
+import { choice1_atom, choice2_atom, dataset_inputs_values } from "../state/atoms";
+
 
 const Dataset = () => {
     const [data, setData] = React.useState([]);
     const [schema, setSchema] = React.useState(null);
-   
     const [options, setOptions] = React.useState([]);
+
+    const choice1 = useRecoilValue(choice1_atom)
+    const choice2 = useRecoilValue(choice2_atom)
     const inputValues = useRecoilValue(dataset_inputs_values)
-    const inputValues2 = useRecoilValue(tabelarization_values)
     const navigator = useNavigate();
     useEffect(() => {
         eel.get_dataset()().then((dataset) => {
             const d = JSON.parse(dataset);
             console.log(d);
+            // usuwanie indexów
             d.schema.fields = d.schema.fields.filter((el)=> el.name !== "index");
             d.data = d.data.map(({index, ...rest})=>({...rest}))
+            // koniec usuwania indexów
             setData(d.data);
             setSchema(d.schema);
 
@@ -63,8 +66,8 @@ const Dataset = () => {
     }
 
     const handleTabelarization = async () => {
-        console.log(inputValues2)
-        await eel.dataset_to_tabelarisation(inputValues2)()
+
+        await eel.dataset_to_tabelarisation()()
         return navigator("/tabelarisation")
     }
     const handleNewColumn = async () => {
@@ -82,9 +85,10 @@ const Dataset = () => {
             <div className="py-10 flex flex-col items-center">
                 <Button onClick={handleEventLogCreation} >Utwórz dziennik zdarzeń</Button>
                 <Button onClick={handleSubmitTypes} >Zatwierdź zmianę typów</Button>
-                <Button onClick={handleTabelarization}>Zrób Tabelaryzację</Button>
+                <Button onClick={handleTabelarization} disabled={choice1===null || choice2===null}>Zrób Tabelaryzację</Button>
                 <Button onClick={handleNewColumn}>Dodaj nową kolumne</Button>
                 <DatasetInputs />
+
             </div>
             <div class="overflow-x-auto shadow-md sm:rounded-lg">
                 {schema === null ? (<div>wczytywanie danych...</div>) : (

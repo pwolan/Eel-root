@@ -10,9 +10,9 @@ const Controls = () => {
 
   return (
     <div className="tools">
-      <Button className=" !w-10 !px-2" onClick={() => zoomIn()}>+</Button>
-      <Button className=" !w-10 !px-2" onClick={() => zoomOut()}>-</Button>
-      <Button className=" !w-10 !px-2" onClick={() => resetTransform()}>x</Button>
+      <Button className=" !w-24 !px-2" onClick={() => zoomIn()}>Przybliż</Button>
+      <Button className=" !w-24 !px-2" onClick={() => zoomOut()}>Oddal</Button>
+      <Button className=" !w-24 !px-2" onClick={() => resetTransform()}>Zresetuj</Button>
     </div>
   );
 };
