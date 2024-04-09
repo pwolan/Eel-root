@@ -67,6 +67,10 @@ const Dataset = () => {
         await eel.dataset_to_tabelarisation(inputValues2)()
         return navigator("/tabelarisation")
     }
+    const handleNewColumn = async () => {
+        await eel.new_column()
+
+    }
 
 
    
@@ -79,6 +83,7 @@ const Dataset = () => {
                 <Button onClick={handleEventLogCreation} >Utwórz dziennik zdarzeń</Button>
                 <Button onClick={handleSubmitTypes} >Zatwierdź zmianę typów</Button>
                 <Button onClick={handleTabelarization}>Zrób Tabelaryzację</Button>
+                <Button onClick={handleNewColumn}>Dodaj nową kolumne</Button>
                 <DatasetInputs />
             </div>
             <div class="overflow-x-auto shadow-md sm:rounded-lg">

@@ -5,6 +5,7 @@ import pm4py
 import os
 from backend.new_columns import new_column
 from backend.event_log import make_event_log_object
+from copy import deepcopy
 
 database = {
     "csv_files": []
@@ -23,6 +24,9 @@ cluster_id_1 = "Cluster 1"
 cluster_id_2 = "Cluster 2"
 # Timestamp name in temp_data; Timestamp name in temp_data_event_log is always "Timestamp"
 # Timestamp in temp_data_event_log = timestamp_id in temp_data if timestamp_id in temp_data else made from index column
+new_column_name = "New Column"
+new_column_instructions = ""
+new_column_default_val = "0"
 
 
 def read_data(separator: str):
@@ -95,6 +99,17 @@ def set_cluster_id_2(new_cluster_id_2: str):
     global cluster_id_2
     cluster_id_2 = new_cluster_id_2
 
+def set_new_column_name(new_new_column: str):
+    global new_column_name
+    new_column_name = new_new_column
+
+def set_new_instructions(new_instructions: str):
+    global new_column_instructions
+    new_column_instructions = new_instructions
+
+def set_new_default_val(new_default_val: str):
+    global new_column_default_val
+    new_column_default_val = new_default_val
 
 def get_dtypes():
     global temp_data
@@ -120,9 +135,27 @@ def convert_to_datetime(column_name: str):
     temp_data[column_name] = pd.to_datetime(temp_data[column_name], format="%d.%m.%Y %H:%M")
 
 
-def add_new_column(new_column_name: str, instructions, default_val=0):
+def add_new_column():
     global temp_data
-    new_column(temp_data, new_column_name, instructions, default_val)
+    global new_column_name, new_column_instructions, new_column_default_val
+
+    if type(new_column_instructions) is list:
+        return None
+    new_column_instructions = new_column_instructions.split(';')
+    df2 = deepcopy(temp_data)
+    for i in range(len(new_column_instructions)):
+        single_if = new_column_instructions[i].split(',')
+        if len(single_if) != 2:
+            return f" błąd w instrukcji o numerze {i}"
+        new_column_instructions[i] = tuple(single_if)
+
+    print(new_column_instructions)
+    res = new_column(temp_data, new_column_name, new_column_instructions, new_column_default_val)
+    if res != "OK":
+        temp_data = df2
+
+    return res
+
 
 def make_event_log():
     global temp_data, temp_data_event_log

@@ -57,6 +57,18 @@ def set_cluster_id_2(new_cluster_id_2: str):
     return bc.set_cluster_id_2(new_cluster_id_2)
 
 @eel.expose
+def set_new_column_name(new_column_name: str):
+    return bc.set_new_column_name(new_column_name)
+
+@eel.expose
+def set_new_instructions(new_instructions: str):
+    return bc.set_new_instructions(new_instructions)
+
+@eel.expose
+def set_new_default_val(new_default_val: str):
+    return bc.set_new_default_val(new_default_val)
+
+@eel.expose
 def get_datatypes():
     return bc.get_dtypes()
 
@@ -131,6 +143,13 @@ def use_button(x):
     print(bc.get_data())
 
     return "use_button success"
+
+@eel.expose
+def new_column():
+    res = bc.add_new_column()
+    print(res)
+    return res
+
 
 # Use latest version of Eel from parent directory
 sys.path.insert(1, '../')
