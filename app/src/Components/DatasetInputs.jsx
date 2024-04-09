@@ -55,18 +55,12 @@ const DatasetInputs = ({ cols, status }) => {
     }
     const handleColName = (e) => {
         eel.set_new_column_name(e.target.value)();
-        // eel.set_cluster_id_2(e.target.value)
     }
     const handleInstr = (e) => {
         eel.set_new_instructions(e.target.value)();
-        // eel.set_cluster_id_2(e.target.value)
     }
-
     const handleDefaultVal = (e) => {
-        setValues((prev) => ({ ...prev, defaultVal: e.target.value }))
         eel.set_new_default_val(e.target.value)();
-
-        // eel.set_cluster_id_2(e.target.value)
     }
     return (<>
         <div class=" mx-3 m-6">

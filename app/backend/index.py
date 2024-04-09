@@ -3,7 +3,7 @@ import numpy as np
 import json
 import pm4py
 import os
-from backend.new_columns import new_column
+from backend.new_columns import new_column, find_bracket_contents
 from backend.event_log import make_event_log_object
 from copy import deepcopy
 
@@ -24,7 +24,7 @@ cluster_id_1 = "Cluster 1"
 cluster_id_2 = "Cluster 2"
 # Timestamp name in temp_data; Timestamp name in temp_data_event_log is always "Timestamp"
 # Timestamp in temp_data_event_log = timestamp_id in temp_data if timestamp_id in temp_data else made from index column
-new_column_name = "New Column"
+new_column_name = "nowa"
 new_column_instructions = ""
 new_column_default_val = "0"
 
@@ -139,20 +139,28 @@ def convert_to_datetime(column_name: str):
 def add_new_column():
     global temp_data
     global new_column_name, new_column_instructions, new_column_default_val
-
     if type(new_column_instructions) is list:
         return {"message": "Nieznany błąd", "type": "error"}
-    new_column_instructions = new_column_instructions.replace("\n", " ")
-    new_column_instructions = new_column_instructions.split(';') #TODO do zmiany na \n gdy będzie textarea  
+    instructions = new_column_instructions.replace("\n", " ")
+    instructions = instructions.split(';')
     df2 = deepcopy(temp_data)
-    for i in range(len(new_column_instructions)):
-        single_if = new_column_instructions[i].split(',')
+    for i in range(len(instructions)):
+        single_if = instructions[i].split(',')
         if len(single_if) != 2:
             return {"message": f"Błąd w instrukcji o numerze {i}", "type": "error"}
-        new_column_instructions[i] = tuple(single_if)
+        column_names = find_bracket_contents(single_if[0] + single_if[1])
 
-    print(new_column_instructions)
-    res, status = new_column(temp_data, new_column_name, new_column_instructions, new_column_default_val)
+        for col in column_names:
+            if not ((col[0] == '\'' and col[-1] == '\'') or (col[0] == '\"' and col[-1] == '\"')):
+                return {"message": f"Błąd w instrukcji o numerze {i} kolumna {col} musi zawierać znak \' lub \" na począku i końcu", "type": "error"}
+            if col[1:-1] not in temp_data:
+                return {"message": f"Błąd w instrukcji o numerze {i} kolumna {col} nie istnieje", "type": "error"}
+
+        instructions[i] = tuple(single_if)
+
+
+    print(instructions)
+    res, status = new_column(temp_data, new_column_name, instructions, new_column_default_val)
     if res != "Dodawanie zakończone pomyślnie":
         temp_data = df2
 
@@ -192,6 +200,13 @@ def visualize(algos: str):
     return name
 
 
+def change_keys(input_dict, name_dict):
+    for old_name, new_name in name_dict.items():
+        if old_name in input_dict:
+            input_dict[new_name] = input_dict.pop(old_name)
+    return input_dict
+
+
 def model_statistics(name_cluster: str = "Cluster", name_caseid: str = "Case ID", name_timestamp: str = "Timestamp"):
     global temp_data_event_log, path_file_csv
     global net, im, fm
@@ -199,8 +214,17 @@ def model_statistics(name_cluster: str = "Cluster", name_caseid: str = "Case ID"
     if net is None:
         print("uruchom najpierw jeden z algorytmów")
         return None
-    return pm4py.fitness_alignments(temp_data_event_log, net, im, fm, activity_key=cluster_id, case_id_key=case_id,
+    res = pm4py.fitness_alignments(temp_data_event_log, net, im, fm, activity_key=cluster_id, case_id_key=case_id,
                              timestamp_key="Timestamp")
+
+    name_dict = {
+        'percFitTraces': 'percFitTraces',
+        'averageFitness': 'averageFitness',
+        'percentage_of_fitting_traces': 'percentage_of_fitting_traces',
+        'average_trace_fitness': 'average_trace_fitness',
+        'log_fitness': 'log_fitness'
+    }
+    return change_keys(res, name_dict)
 
 
 def event_log_statistics():
