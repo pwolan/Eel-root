@@ -31,7 +31,6 @@ const Upload = () => {
                         {value: null, label: 'Wykryj'},
                         {value: ',', label: 'Przecinek'},
                         {value: ';', label: 'Średnik'},
-                        {value: '\t', label: 'Tabulator'},
                         {value: '.', label: 'Kropka'},
                     ]}
                     onChange={(e) => setDelimiter(e.value)}

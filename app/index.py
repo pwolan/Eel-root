@@ -16,9 +16,7 @@ import backend.index as bc
 
 @eel.expose
 def dataset_to_eventlog(columns):
-    #df = bc.get_dataframe()
     bc.make_event_log()
-    #bc.event_log_statistics()
     return bc.get_data()
 
 @eel.expose
@@ -29,6 +27,9 @@ def dataset_to_tabelarisation():
 def get_tabelarisation_data():
     return bc.get_tabelarisation_data()
 
+@eel.expose
+def get_eventlog_statistics():
+    return bc.event_log_statistics()
 
 @eel.expose
 def set_case_id(new_case_id: str):
@@ -197,9 +198,6 @@ def add_column(column_name: str, cond_instructions, statement_instructions, defa
     """
     bc.add_new_column(column_name, list(zip(cond_instructions, statement_instructions)), default_value)
     return
-
-
-
 
 
 def start_eel(develop):

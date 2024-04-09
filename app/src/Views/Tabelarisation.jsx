@@ -49,7 +49,13 @@ const Tabelarisation = () => {
                             {data.map((row) => (
                                 <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
                                     {Object.values(row).map((value) => (
-                                        <td class="px-6 py-4" key={value}>
+                                        <td class={`px-6 py-4 ${
+                                            value === 'True'
+                                              ? 'text-green-500'
+                                              : (value === 'False'
+                                              ? 'text-red-500'
+                                              : 'text-gray-500')
+                                          }`} key={value}>
                                             {value}
                                         </td>
                                     ))}

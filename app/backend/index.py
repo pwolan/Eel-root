@@ -141,21 +141,22 @@ def add_new_column():
     global new_column_name, new_column_instructions, new_column_default_val
 
     if type(new_column_instructions) is list:
-        return None
-    new_column_instructions = new_column_instructions.split(';')
+        return {"message": "Nieznany błąd", "type": "error"}
+    new_column_instructions = new_column_instructions.replace("\n", " ")
+    new_column_instructions = new_column_instructions.split(';') #TODO do zmiany na \n gdy będzie textarea  
     df2 = deepcopy(temp_data)
     for i in range(len(new_column_instructions)):
         single_if = new_column_instructions[i].split(',')
         if len(single_if) != 2:
-            return f" błąd w instrukcji o numerze {i}"
+            return {"message": f"Błąd w instrukcji o numerze {i}", "type": "error"}
         new_column_instructions[i] = tuple(single_if)
 
     print(new_column_instructions)
-    res = new_column(temp_data, new_column_name, new_column_instructions, new_column_default_val)
-    if res != "OK":
+    res, status = new_column(temp_data, new_column_name, new_column_instructions, new_column_default_val)
+    if res != "Dodawanie zakończone pomyślnie":
         temp_data = df2
 
-    return res
+    return {"message": res, "type": status}
 
 
 def make_event_log():
@@ -205,10 +206,15 @@ def model_statistics(name_cluster: str = "Cluster", name_caseid: str = "Case ID"
 def event_log_statistics():
     global temp_data_event_log
     start_activities = pm4py.get_start_activities(temp_data_event_log)
+    end_activities = pm4py.get_end_activities(temp_data_event_log)
     counted_cases = 0
     for start_activity in start_activities:
         counted_cases += start_activities[start_activity]
     variants = pm4py.stats.get_variants(temp_data_event_log)
+    variants_changed = []
+    for variant in variants:
+        lista = list(variant)
+        variants_changed.append([lista, variants[variant]])
     counted_case_length = {}
     for variant in variants:
         if len(variant) in counted_case_length:
@@ -217,8 +223,11 @@ def event_log_statistics():
             counted_case_length[len(variant)] = variants[variant]
     print(start_activities, counted_cases)
     print(pm4py.get_end_activities(temp_data_event_log))
-    print(variants, counted_case_length)
-    #print(pm4py.stats.get_variants_paths_duration(temp_data_event_log))
+    print(variants_changed, counted_case_length)
+    dict_to_send = {"Startowe czynności": start_activities, "Końcowe czynności": end_activities, 
+                    "Ilość spraw": counted_cases, "Długości spraw": counted_case_length,
+                    "Warianty": variants_changed}
+    return json.dumps(dict_to_send)
 
 def download_event_log(): #TODO test this shit
     global temp_data_event_log

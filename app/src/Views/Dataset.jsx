@@ -13,6 +13,7 @@ const Dataset = () => {
     const [data, setData] = React.useState([]);
     const [schema, setSchema] = React.useState(null);
     const [options, setOptions] = React.useState([]);
+    const [newColumnStatus, setNewColumnStatus] = React.useState(null)
 
     const choice1 = useRecoilValue(choice1_atom)
     const choice2 = useRecoilValue(choice2_atom)
@@ -66,12 +67,25 @@ const Dataset = () => {
     }
 
     const handleTabelarization = async () => {
-
+        
         await eel.dataset_to_tabelarisation()()
         return navigator("/tabelarisation")
     }
     const handleNewColumn = async () => {
-        await eel.new_column()
+        const status = await eel.new_column()()
+        setNewColumnStatus(status)
+        eel.get_dataset()().then((dataset) => {
+            const d = JSON.parse(dataset);
+            console.log(d);
+            // usuwanie indexów
+            d.schema.fields = d.schema.fields.filter((el)=> el.name !== "index");
+            d.data = d.data.map(({index, ...rest})=>({...rest}))
+            // koniec usuwania indexów
+            setData(d.data);
+            setSchema(d.schema);
+      
+
+        });
 
     }
 
@@ -82,13 +96,14 @@ const Dataset = () => {
             <div>
                 <Button onClick={()=>navigator("/")} className=" !w-20 ">Powrót</Button>
             </div>
-            <div className="py-10 flex flex-col items-center">
+            <div className="py-10 flex justify-center items-center">
                 <Button onClick={handleEventLogCreation} >Utwórz dziennik zdarzeń</Button>
                 <Button onClick={handleSubmitTypes} >Zatwierdź zmianę typów</Button>
                 <Button onClick={handleTabelarization} disabled={choice1===null || choice2===null}>Zrób Tabelaryzację</Button>
                 <Button onClick={handleNewColumn}>Dodaj nową kolumne</Button>
-                <DatasetInputs />
-
+            </div>
+            <div>
+                <DatasetInputs status={newColumnStatus}  cols={schema}/>
             </div>
             <div class="overflow-x-auto shadow-md sm:rounded-lg">
                 {schema === null ? (<div>wczytywanie danych...</div>) : (
