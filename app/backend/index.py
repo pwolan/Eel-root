@@ -6,6 +6,7 @@ import os
 from backend.new_columns import new_column, find_bracket_contents
 from backend.event_log import make_event_log_object
 from copy import deepcopy
+from datetime import datetime
 
 database = {
     "csv_files": []
@@ -259,7 +260,8 @@ def download_event_log(): #TODO test this shit
     dataframe = pm4py.convert_to_dataframe(temp_data_event_log)
     df_first_three = dataframe.iloc[:, :3]
     filename_without_extension = os.path.splitext(os.path.basename(path_file_csv))[0]
-    name = filename_without_extension + "exported_event_log.csv"
+    current_local_time = datetime.now().strftime('%H:%M')
+    name = filename_without_extension + current_local_time + "_exported_event_log.csv"
     df_first_three.to_csv(directory + "\\" + name, index=False)
 
 

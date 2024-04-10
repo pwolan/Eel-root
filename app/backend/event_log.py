@@ -21,6 +21,7 @@ def make_event_log_object(df: pd.DataFrame, name_cluster: str = "Cluster", name_
     # pm4py requires name_cluster and name_caseid to be of type string
     df[name_caseid] = df[name_caseid].astype(str)
     df[name_cluster] = df[name_cluster].astype(str)
+    df[name_timestamp] = df[name_timestamp].astype(pd.Timestamp)
 
 
     if not name_timestamp in df.columns.tolist(): #TODO - make fake timestamps to stop pm4py potential crash
