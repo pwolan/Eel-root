@@ -33,9 +33,9 @@ def new_column(df: pd.DataFrame, new_column_name: str, instructions, default_val
     try:
         df[new_column_name] = df.apply(lambda row: f(row, instructions, default_val), axis=1)
     except Exception as e:
-        return "Wystąpił błąd: " + str(e), "error"
+        return "Wystąpił błąd: " + str(e), "error"  
     finally:
         if new_column_name in df.columns:
             return "Dodawanie zakończone pomyślnie", "success"
         else:
-            return "Wystąpił błąd (być może podano kolumnę która nie istnieje?)", "error"
+            return "Wystąpił błąd", "error"

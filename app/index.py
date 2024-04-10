@@ -88,7 +88,6 @@ def get_dataset():
 
 @eel.expose
 def pick_file(wildcard="*"):
-    print("pick_file")
     app = wx.App(None)
     style = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST | wx.STAY_ON_TOP
     dialog = wx.FileDialog(None, 'Open', wildcard=wildcard, style=style)
@@ -108,7 +107,6 @@ def change_datatypes(changes):
             bc.set_dtype(change['name'], change['type'])
             statuses[change['name']] = "success"
         except:
-            print("Error in changing datatype")
             statuses[change['name']] = "error"
     return statuses
 
@@ -124,7 +122,6 @@ def visualize_heuristic():
 @eel.expose
 def get_model_stats():
     res = bc.model_statistics()
-    print(res)
     return res
 
 
@@ -141,14 +138,12 @@ def use_button(x):
         # ("['Zmienna A'] > 0", "exit(0)") eval is UNSAFE if you use exit(0) in val the program will end
     ]
     bc.add_new_column("nowa kolumna", if_instructions, 0)
-    print(bc.get_data())
 
     return "use_button success"
 
 @eel.expose
 def new_column():
     res = bc.add_new_column()
-    print(res)
     return res
 
 
@@ -160,7 +155,6 @@ def submit_csv_import(separator_value):
     # TODO skorzystać z wcześniej otrzymanego path
     separator = separator_value # TODO wyrzucić wybór separatora na frontend (None jest Defaultowy)
     bc.read_data(separator) 
-    print("submit_csv_import")
     something = "success"
     return something
 
@@ -168,7 +162,6 @@ def submit_csv_import(separator_value):
 @eel.expose  # Expose function to JavaScript
 def say_hello_py(x):
     """Print message from JavaScript on app initialization, then call a JS function."""
-    print('Hello from %s' % x)  # noqa T001
     eel.say_hello_js('Python {from within say_hello_py()}!')
 
 

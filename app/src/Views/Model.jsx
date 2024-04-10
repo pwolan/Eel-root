@@ -5,11 +5,14 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Button from "../Components/Button";
 import Controls from "../Components/Controls";
 import Stats from "../Components/Stats";
+import { useRecoilValue } from "recoil";
+import { are_stats_loading } from "../state/atoms";
 
 const Model = () => {
     const [visualizationPath, setVisualizationPath] = useState(null)
     const [isVisualizationLoading, setIsVisualizationLoading] = useState(false)
     const [isButtonActive, setIsButtonActive] = useState(false);
+    const areStatsLoading = useRecoilValue(are_stats_loading)
     const navigator = useNavigate();
     useEffect(() => {
 
@@ -39,7 +42,7 @@ const Model = () => {
     return (
         <div className="p-10 h-screen flex flex-col">
             <div>
-                <Button onClick={handleGoToEventLog} className=" !w-24 ">Powrót</Button>
+                <Button disabled={areStatsLoading} onClick={handleGoToEventLog} className=" !w-24 ">Powrót</Button>
             </div>
             <div className="py-10 flex justify-center items-center">
                 <Button onClick={handleShowVisualizationInductive}>Algorytm Inductive Miner</Button>

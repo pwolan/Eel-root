@@ -25,3 +25,9 @@ export const choice2_atom = atom({
     key: 'choice2',
     default: null
 })
+
+
+export const are_stats_loading = atom({
+    key: 'are_stats_loading',
+    default: false
+})  

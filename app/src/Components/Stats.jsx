@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { eel } from "../App";
+import { useRecoilState } from "recoil";
+import { are_stats_loading } from "../state/atoms";
 
 const Stats = ({path}) => {
     const [stats, setStats] = useState(null)
-    const [areStatsLoading, setAreStatsLoading] = useState(false)
+    const [areStatsLoading, setAreStatsLoading] = useRecoilState(are_stats_loading)
+    
     useEffect(() => {
         if(path === null) return
+        setAreStatsLoading(true)
         setTimeout(()=>{
-            setAreStatsLoading(true)
             eel.get_model_stats()().then((stats) => {
-                console.log(stats)
                 setAreStatsLoading(false)
                 setStats(stats)
             })
@@ -18,7 +20,7 @@ const Stats = ({path}) => {
     },[path]);
     return (
         <div>
-            {areStatsLoading && <div>Wczytywanie...</div>}
+            {areStatsLoading && <div>Wczytywanie statystyk...</div>}
             {stats && areStatsLoading === false && (
                 <div className="flex items-center justify-center pb-8 flex-wrap">
                    {Object.keys(stats).map((key) => (

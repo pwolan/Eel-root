@@ -29,11 +29,16 @@ new_column_name = "nowa"
 new_column_instructions = ""
 new_column_default_val = "0"
 
+model_stats = None
+model_type = None
+model_visualized = None
+model_changed = True
+
 
 def read_data(separator: str):
     global temp_data, path_file_csv
     global timestamp_id
-    print("Separator", repr(separator), "Separator")
+
     temp_data = pd.read_csv(path_file_csv, sep=separator, decimal=",", parse_dates=True, engine='python')
     # List of possible separators
     # possible_separators = ['\t', ';', ',', '.']  # Add other separators as needed
@@ -49,18 +54,20 @@ def read_data(separator: str):
     #         continue
     if timestamp_id in temp_data.columns:
         temp_data = temp_data.sort_values(by=timestamp_id)
-    print(temp_data)
 
 
-def delete_records():
-    global temp_data
-    global case_id, cluster_id
-    temp_data = temp_data.drop_duplicates(subset=[case_id, cluster_id], keep='last')
-    print(temp_data)
+
+# def delete_records():
+#     global temp_data
+#     global case_id, cluster_id
+#     temp_data = temp_data.drop_duplicates(subset=[case_id, cluster_id], keep='last')
+#     print(temp_data)
 
 
 def set_path(path: str):
     global path_file_csv
+    global model_changed
+    model_changed = True
     path_file_csv = path
 
 def read_path():
@@ -92,12 +99,10 @@ def set_timestamp_id(new_timestamp: str):
     timestamp_id = new_timestamp
 
 def set_cluster_id_1(new_cluster_id_1: str):
-    print(new_cluster_id_1)
     global cluster_id_1
     cluster_id_1 = new_cluster_id_1
 
 def set_cluster_id_2(new_cluster_id_2: str):
-    print(new_cluster_id_2)
     global cluster_id_2
     cluster_id_2 = new_cluster_id_2
 
@@ -118,12 +123,10 @@ def get_dtypes():
     temp_list = []
     for column in temp_data:
         temp_list.append(temp_data[column].dtype.type)
-    #column_dtype = temp_data[column_name].dtype
     temp_list = [dtype.__name__ for dtype in temp_list]
     cleaned_data_types = [data_type.replace('64', '').replace('_', '') for data_type in temp_list]
     cleaned_data_types = list(dict.fromkeys(cleaned_data_types))
 
-    print(cleaned_data_types)
     return json.dumps(cleaned_data_types)
 
 
@@ -140,6 +143,8 @@ def convert_to_datetime(column_name: str):
 def add_new_column():
     global temp_data
     global new_column_name, new_column_instructions, new_column_default_val
+    global model_changed
+    model_changed = True
     if type(new_column_instructions) is list:
         return {"message": "Nieznany błąd", "type": "error"}
     instructions = new_column_instructions.replace("\n", " ")
@@ -159,8 +164,6 @@ def add_new_column():
 
         instructions[i] = tuple(single_if)
 
-
-    print(instructions)
     res, status = new_column(temp_data, new_column_name, instructions, new_column_default_val)
     if res != "Dodawanie zakończone pomyślnie":
         temp_data = df2
@@ -171,24 +174,24 @@ def add_new_column():
 def make_event_log():
     global temp_data, temp_data_event_log
     global case_id, cluster_id, timestamp_id
-    print(case_id, cluster_id, timestamp_id)
+    global model_changed
+    model_changed = True
     temp_data_event_log = make_event_log_object(temp_data, name_cluster=cluster_id, name_caseid=case_id, name_timestamp=timestamp_id)
 
 
 def visualize(algos: str):
-    #TODO only visualization, do not change make_event_log, create new function!
-    # global temp_data, temp_data_event_log
-    # temp_data_event_log = make_event_log(temp_data, "petri"+file_path+".png", "heu"+file_path+".png", name_caseid=name_caseid)
-    # print(temp_data_event_log)
     global temp_data_event_log
     global path_file_csv
     global net, im, fm
     global case_id, cluster_id
+    global model_type
     if algos == 'inductive':
+        model_type = 'ind'
         net, im, fm = pm4py.discover_petri_net_inductive(temp_data_event_log, activity_key=cluster_id,
                                                           case_id_key=case_id, timestamp_key="Timestamp")
 
     elif algos == 'heuristic':
+        model_type = 'heu'
         net, im, fm = pm4py.discover_petri_net_heuristics(temp_data_event_log, activity_key=cluster_id,
                                                           case_id_key=case_id, timestamp_key="Timestamp")
     else:
@@ -214,20 +217,27 @@ def model_statistics(name_cluster: str = "Cluster", name_caseid: str = "Case ID"
     global temp_data_event_log, path_file_csv
     global net, im, fm
     global case_id, cluster_id
-    if net is None:
-        print("uruchom najpierw jeden z algorytmów")
-        return None
-    res = pm4py.fitness_alignments(temp_data_event_log, net, im, fm, activity_key=cluster_id, case_id_key=case_id,
-                             timestamp_key="Timestamp")
-
+    global model_changed, model_stats, model_visualized, model_type
     name_dict = {
-        'percFitTraces': 'percFitTraces',
-        'averageFitness': 'averageFitness',
-        'percentage_of_fitting_traces': 'percentage_of_fitting_traces',
-        'average_trace_fitness': 'average_trace_fitness',
-        'log_fitness': 'log_fitness'
+        'percFitTraces': 'Percentage Fit Traces',
+        'averageFitness': 'Average fitness',
+        'percentage_of_fitting_traces': 'Percentage of fitting traces',
+        'average_trace_fitness': 'Average trace fitness',
+        'log_fitness': 'Logarithmic fitness'
     }
-    return change_keys(res, name_dict)
+    if net is None:
+        print("Uruchom najpierw jeden z algorytmów")
+        return None
+    if model_changed == True or model_visualized != model_type:
+        res = pm4py.fitness_alignments(temp_data_event_log, net, im, fm, activity_key=cluster_id, case_id_key=case_id,
+                             timestamp_key="Timestamp", multi_processing=True)
+        model_stats = None
+        model_stats = change_keys(res, name_dict)
+        model_changed = False
+        model_visualized = model_type
+    
+
+    return model_stats
 
 
 
@@ -249,21 +259,19 @@ def event_log_statistics():
             counted_case_length[len(variant)] += variants[variant]
         else:
             counted_case_length[len(variant)] = variants[variant]
-    print(start_activities, counted_cases)
-    print(pm4py.get_end_activities(temp_data_event_log))
-    print(variants_changed, counted_case_length)
+   
     dict_to_send = {"Startowe czynności": start_activities, "Końcowe czynności": end_activities, 
                     "Ilość spraw": counted_cases, "Długości spraw": counted_case_length,
                     "Warianty": variants_changed}
     return json.dumps(dict_to_send)
 
-def download_event_log(): #TODO test this shit
+def download_event_log():
     global temp_data_event_log
     directory = os.path.dirname(path_file_csv)
     dataframe = pm4py.convert_to_dataframe(temp_data_event_log)
     df_first_three = dataframe.iloc[:, :3]
     filename_without_extension = os.path.splitext(os.path.basename(path_file_csv))[0]
-    current_local_time = datetime.now().strftime('%H:%M')
+    current_local_time = datetime.now().strftime('%H%M')
     name = filename_without_extension + current_local_time + "_exported_event_log.csv"
     df_first_three.to_csv(directory + "\\" + name, index=False)
 
@@ -298,6 +306,7 @@ def make_tabelarisation():
     temp_tabelarization_percentage = calculate_percentage_of_different_values(cluster_id_1, cluster_id_2)
     if cluster_id_1 == cluster_id_2:
         temp_tabelarization_data = temp_data[['ID', cluster_id_1]].copy()
+        temp_tabelarization_data[cluster_id_1 + " (1)"] = temp_data[cluster_id_1].copy()
     else:
         temp_tabelarization_data = temp_data[['ID', cluster_id_1, cluster_id_2]].copy()
     temp_tabelarization_data['Czy są takie same?'] = column_diff['column_difference'].to_list()

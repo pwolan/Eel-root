@@ -66,7 +66,7 @@ const DatasetInputs = ({ cols, status }) => {
         <div class=" mx-3 m-6">
             <div className="flex flex-wrap items-center justify-center">
                 <div class=" px-3 mb-6 md:mb-0">
-                    <label className="block ml-4 text-gray-700 text-sm font-bold">CaseID:</label>
+                    <label className="block ml-4 text-gray-700 text-sm font-bold">Case ID:</label>
                     <Select
                         classNames={{
                             //    container: (state)=>"!w-40"
