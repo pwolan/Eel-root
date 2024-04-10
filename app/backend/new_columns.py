@@ -2,7 +2,6 @@ import pandas as pd
 
 
 def f(row, instructions, default_val):
-    #TODO - safe eval
     for cond, val in instructions:
         if eval(cond):
             return eval(val)

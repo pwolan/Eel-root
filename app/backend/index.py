@@ -61,7 +61,6 @@ def read_data(separator: str):
 #     global temp_data
 #     global case_id, cluster_id
 #     temp_data = temp_data.drop_duplicates(subset=[case_id, cluster_id], keep='last')
-#     print(temp_data)
 
 
 def set_path(path: str):

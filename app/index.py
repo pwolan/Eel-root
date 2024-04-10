@@ -152,8 +152,8 @@ sys.path.insert(1, '../')
 
 @eel.expose
 def submit_csv_import(separator_value):
-    # TODO skorzystać z wcześniej otrzymanego path
-    separator = separator_value # TODO wyrzucić wybór separatora na frontend (None jest Defaultowy)
+
+    separator = separator_value 
     bc.read_data(separator) 
     something = "success"
     return something
