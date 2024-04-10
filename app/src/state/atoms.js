@@ -9,9 +9,9 @@ export const accepted_file = atom({
 export const dataset_inputs_values = atom({
     key: 'dataset_inputs_values',
     default: {
-        caseId: 'Case ID',
-        timestamp: 'Timestamp',
-        cluster: 'Cluster',
+        caseId: null,
+        timestamp: null,
+        cluster: null,
     }
 })
 

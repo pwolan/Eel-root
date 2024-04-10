@@ -5,7 +5,7 @@ import Button from "../Components/Button";
 import { useNavigate } from "react-router-dom";
 import Select from 'react-select';
 import DatasetInputs from "../Components/DatasetInputs";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { choice1_atom, choice2_atom, dataset_inputs_values } from "../state/atoms";
 
 
@@ -15,11 +15,14 @@ const Dataset = () => {
     const [options, setOptions] = React.useState([]);
     const [newColumnStatus, setNewColumnStatus] = React.useState(null)
 
-    const choice1 = useRecoilValue(choice1_atom)
-    const choice2 = useRecoilValue(choice2_atom)
-    const inputValues = useRecoilValue(dataset_inputs_values)
+    const [choice1, set_choice_1] = useRecoilState(choice1_atom)
+    const [choice2, set_choice_2] = useRecoilState(choice2_atom)
+    const [inputValues, setInputValues] = useRecoilState(dataset_inputs_values)
     const navigator = useNavigate();
     useEffect(() => {
+        setInputValues({caseId: null, cluster: null, timestamp: null});
+        set_choice_1(null);
+        set_choice_2(null);
         eel.get_dataset()().then((dataset) => {
             const d = JSON.parse(dataset);
             console.log(d);
@@ -92,12 +95,12 @@ const Dataset = () => {
 
    
     return (
-        <div className="p-4">
+        <div className="p-10">
             <div>
-                <Button onClick={()=>navigator("/")} className=" !w-20 ">Powrót</Button>
+                <Button onClick={()=>navigator("/")} className=" !w-24 ">Powrót</Button>
             </div>
-            <div className="py-10 flex justify-center items-center">
-                <Button onClick={handleEventLogCreation} >Utwórz dziennik zdarzeń</Button>
+            <div className="py-10 flex justify-center flex-wrap items-center">
+                <Button onClick={handleEventLogCreation} disabled={inputValues.caseId===null || inputValues.cluster===null || inputValues.timestamp===null}>Utwórz dziennik zdarzeń</Button>
                 <Button onClick={handleSubmitTypes} >Zatwierdź zmianę typów</Button>
                 <Button onClick={handleTabelarization} disabled={choice1===null || choice2===null}>Zrób Tabelaryzację</Button>
                 <Button onClick={handleNewColumn}>Dodaj nową kolumne</Button>

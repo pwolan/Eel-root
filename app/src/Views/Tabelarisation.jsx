@@ -25,7 +25,7 @@ const Tabelarisation = () => {
         return navigator("/dataset")
     }
     return (
-        <div className="p-4">
+        <div className="p-10">
             <div>
                 <Button onClick={handleGoToDataset} className=' !w-24 '>Powrót</Button>
             </div>
