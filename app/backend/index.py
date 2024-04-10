@@ -229,7 +229,7 @@ def model_statistics(name_cluster: str = "Cluster", name_caseid: str = "Case ID"
         return None
     if model_changed == True or model_visualized != model_type:
         res = pm4py.fitness_alignments(temp_data_event_log, net, im, fm, activity_key=cluster_id, case_id_key=case_id,
-                             timestamp_key="Timestamp", multi_processing=True)
+                             timestamp_key="Timestamp" )#multi_processing=True
         model_stats = None
         model_stats = change_keys(res, name_dict)
         model_changed = False
