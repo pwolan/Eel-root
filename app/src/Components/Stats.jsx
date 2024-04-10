@@ -3,16 +3,23 @@ import { eel } from "../App";
 
 const Stats = ({path}) => {
     const [stats, setStats] = useState(null)
+    const [areStatsLoading, setAreStatsLoading] = useState(false)
     useEffect(() => {
         if(path === null) return
-        eel.get_model_stats()().then((stats) => {
-            console.log(stats)
-            setStats(stats)
-        })
+        setTimeout(()=>{
+            setAreStatsLoading(true)
+            eel.get_model_stats()().then((stats) => {
+                console.log(stats)
+                setAreStatsLoading(false)
+                setStats(stats)
+            })
+        }, 1000)
+    
     },[path]);
     return (
         <div>
-            {stats && (
+            {areStatsLoading && <div>Wczytywanie...</div>}
+            {stats && areStatsLoading === false && (
                 <div className="flex items-center justify-center pb-8 flex-wrap">
                    {Object.keys(stats).map((key) => (
                           <div key={key} className="p-2 font-semibold">

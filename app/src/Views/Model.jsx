@@ -8,6 +8,7 @@ import Stats from "../Components/Stats";
 
 const Model = () => {
     const [visualizationPath, setVisualizationPath] = useState(null)
+    const [isVisualizationLoading, setIsVisualizationLoading] = useState(false)
     const [isButtonActive, setIsButtonActive] = useState(false);
     const navigator = useNavigate();
     useEffect(() => {
@@ -43,26 +44,25 @@ const Model = () => {
             <div className="py-10 flex justify-center items-center">
                 <Button onClick={handleShowVisualizationInductive}>Algorytm Inductive Miner</Button>
                 <Button onClick={handleShowVisualizationHeuristic}>Algorytm Heuristic Miner</Button>
-                {/* <Button onClick={handleShowStats} disabled={!isButtonActive}>Wyświetl statystyki</Button> */}
             </div>
-            <Stats path={visualizationPath}/>
+            <Stats path={visualizationPath} />
             <div className="flex-1 flex flex-col">
-               
-                {visualizationPath && (
-                    <TransformWrapper wheel={{flex: 1}}>
-                        {({zoomIn, zoomOut, resetTransform, ...rest}) => (
+
+                {isVisualizationLoading === true && (<div>wczytywanie...</div>)}
+                {isVisualizationLoading === false && visualizationPath !== null && (
+                    <TransformWrapper minScale={0.2} wheel={{ flex: 1 }}>
+                        {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
                             <>
-                                <Controls/>
-                                <TransformComponent wrapperStyle={{flex: 1}}>
-                                    <img src={`http://localhost:8080/static/${visualizationPath}`} alt="visualization" />
+                                <Controls />
+                                <TransformComponent wrapperStyle={{ flex: 1 }}>
+                                    <img src={`http://localhost:8080/gfx/${visualizationPath}`} className="object-contain" alt="visualization" />
                                 </TransformComponent>
                             </>
-
                         )}
-                       
+
                     </TransformWrapper>
                 )}
-                {/* {visualizationPath && <img src={`/image.png`} alt="visualization" />} */}
+         
             </div>
         </div>
     )

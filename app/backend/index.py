@@ -195,7 +195,9 @@ def visualize(algos: str):
     directory_name = os.path.basename(os.path.dirname(path_file_csv))
     filename_without_extension = os.path.splitext(os.path.basename(path_file_csv))[0]
     name = directory_name + "_" + filename_without_extension + "_petri_" + algos + "_miner.png"  
-    pm4py.save_vis_petri_net(net, im, fm, "static" + "\\" + name)
+    if not os.path.exists("gfx"):
+        os.makedirs("gfx")
+    pm4py.save_vis_petri_net(net, im, fm, "gfx" + "\\" + name)
     #log = pm4py.convert_to_event_log(temp_data_event_log)
     return name
 
@@ -225,6 +227,7 @@ def model_statistics(name_cluster: str = "Cluster", name_caseid: str = "Case ID"
         'log_fitness': 'log_fitness'
     }
     return change_keys(res, name_dict)
+
 
 
 def event_log_statistics():

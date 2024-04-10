@@ -29,9 +29,6 @@ const EventLog = () => {
         })
     }
     const handleShowStatistics = async () => {
-        // eel.get_eventlog_statistics()().then((ee) => {
-        //     console.log(ee)
-        // }) TODO wrzucić to do EventStatistics i w EventStatistics ładnie to wyświetlić
         return navigator("/eventstatistics")
     }
 

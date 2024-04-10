@@ -229,18 +229,16 @@ def start_eel(develop):
 
     app = bottle.Bottle()
 
-    @app.route("/static/<filepath:path>")
+    @app.route("/gfx/<filepath:path>")
     def static(filepath):
-        return bottle.static_file(filepath, root="static")
+        return bottle.static_file(filepath, root="gfx")
     
-    
-
 
     try:
         if develop:
-            eel.start(page,app=app, **eel_kwargs)
+            eel.start(page,app=app,  **eel_kwargs)
         else:
-            eel.start(page, default_path="/",app=app, **eel_kwargs)
+            eel.start(page, default_path="/", app=app, **eel_kwargs)
 
     except EnvironmentError:
         # If Chrome isn't found, fallback to Microsoft Edge on Win10 or greater
